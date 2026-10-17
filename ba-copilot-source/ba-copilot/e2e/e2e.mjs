@@ -60,7 +60,7 @@ try {
   // Sinh 2 màn hình
   await page.getByTestId("new-screen").click();
   await page.getByTestId("screen-name").fill("Đăng nhập");
-  await page.getByTestId("screen-prompt").fill("Màn hình đăng nhập bằng email và mật khẩu, có quên mật khẩu và đăng ký");
+  await page.getByTestId("screen-prompt").fill("Màn hình đăng nhập bằng email và mật khẩu, nút Đăng nhập, có quên mật khẩu và link đăng ký");
   await page.getByTestId("generate-screen").click();
   await page.locator('[data-node-id="btn_login"]').waitFor();
   check(true, "AI sinh màn hình Đăng nhập");

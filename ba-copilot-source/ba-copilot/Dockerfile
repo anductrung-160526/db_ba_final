@@ -8,6 +8,7 @@ ENV NODE_ENV=production \
 WORKDIR /app
 COPY dist ./dist
 COPY public ./public
+COPY model ./model
 COPY package.json ./
 RUN mkdir -p /data
 EXPOSE 3000

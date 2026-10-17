@@ -1,0 +1,2104 @@
+[
+  {
+    "id": "R002",
+    "requirement": {
+      "title": "Tra cứu ticket hỗ trợ của tôi – cổng khách hàng",
+      "actor": "Khách hàng",
+      "description": "Khách hàng tra cứu các ticket hỗ trợ do chính mình đã gửi theo mã ticket hoặc từ khóa, lọc theo trạng thái. Kết quả hiển thị dạng bảng gồm mã, tiêu đề, danh mục, trạng thái và thời điểm cập nhật; khách hàng mở chi tiết ticket để xem tiến độ xử lý.",
+      "permissions": [
+        "Chỉ thao tác trên bản ghi của chính mình: chỉ thấy và mở ticket do mình gửi",
+        "Không xem được ticket của khách hàng khác"
+      ],
+      "rules": [
+        "Kết quả luôn giới hạn trong ticket của tài khoản đang đăng nhập",
+        "Tìm theo mã ticket (vd TK-24051) hoặc từ khóa trong tiêu đề",
+        "Sắp xếp theo thời điểm cập nhật mới nhất",
+        "Phân trang 10 ticket mỗi trang"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Tra cứu ticket của tôi"
+      },
+      "children": [
+        {
+          "id": "title_lookup",
+          "type": "Heading",
+          "props": {
+            "text": "Tra cứu ticket của tôi",
+            "level": 1
+          }
+        },
+        {
+          "id": "lookup_form",
+          "type": "Form",
+          "props": {
+            "submitAction": "search_my_tickets"
+          },
+          "children": [
+            {
+              "id": "lookup_row",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "input_keyword",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mã ticket hoặc từ khóa",
+                    "name": "keyword",
+                    "placeholder": "Vd: TK-24051 hoặc \"không đăng nhập được\"",
+                    "inputType": "text"
+                  }
+                },
+                {
+                  "id": "filter_status",
+                  "type": "Select",
+                  "props": {
+                    "label": "Trạng thái",
+                    "name": "status",
+                    "options": [
+                      "Tất cả",
+                      "Mới",
+                      "Đang xử lý",
+                      "Chờ phản hồi của tôi",
+                      "Đã giải quyết",
+                      "Đã đóng"
+                    ]
+                  }
+                },
+                {
+                  "id": "btn_search",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tra cứu",
+                    "variant": "primary",
+                    "action": "search_my_tickets"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "result_summary",
+          "type": "Text",
+          "props": {
+            "text": "Tìm thấy 3 ticket của bạn khớp với \"đăng nhập\"",
+            "tone": "muted"
+          }
+        },
+        {
+          "id": "table_results",
+          "type": "Table",
+          "props": {
+            "columns": [
+              "Mã ticket",
+              "Tiêu đề",
+              "Danh mục",
+              "Trạng thái",
+              "Ngày gửi",
+              "Cập nhật lần cuối"
+            ],
+            "rows": [
+              [
+                "TK-24051",
+                "Không đăng nhập được ứng dụng di động",
+                "Tài khoản",
+                "Đang xử lý",
+                "12/10/2026",
+                "15/10/2026 09:20"
+              ],
+              [
+                "TK-23877",
+                "Mã OTP đăng nhập đến chậm",
+                "Tài khoản",
+                "Chờ phản hồi của tôi",
+                "02/10/2026",
+                "04/10/2026 16:45"
+              ],
+              [
+                "TK-22910",
+                "Lỗi đăng nhập sau khi đổi mật khẩu",
+                "Tài khoản",
+                "Đã đóng",
+                "18/09/2026",
+                "20/09/2026 10:05"
+              ]
+            ],
+            "rowActions": [
+              "Xem chi tiết"
+            ]
+          }
+        },
+        {
+          "id": "results_pagination",
+          "type": "Pagination",
+          "props": {
+            "pages": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "R007",
+    "requirement": {
+      "title": "Báo cáo yêu cầu đổi lịch hẹn chờ duyệt – phòng khám",
+      "actor": "Trưởng khoa khám bệnh",
+      "description": "Trưởng khoa xem báo cáo dạng bảng các yêu cầu đổi lịch hẹn khám do bệnh nhân gửi, lọc theo bác sĩ và khoảng ngày khám. Với từng yêu cầu, trưởng khoa duyệt để chuyển lịch hẹn sang khung giờ mới hoặc từ chối kèm lý do gửi cho bệnh nhân.",
+      "permissions": [
+        "Chỉ được duyệt/từ chối yêu cầu đổi lịch",
+        "Không thêm, sửa nội dung lịch hẹn hay thông tin bệnh nhân"
+      ],
+      "rules": [
+        "Chỉ yêu cầu ở trạng thái Chờ duyệt mới có thao tác Duyệt/Từ chối",
+        "Từ chối bắt buộc nhập lý do (tối đa 300 ký tự), lý do được gửi cho bệnh nhân",
+        "Duyệt chỉ thành công khi khung giờ mới của bác sĩ còn trống"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Yêu cầu đổi lịch hẹn chờ duyệt"
+      },
+      "children": [
+        {
+          "id": "title_report",
+          "type": "Heading",
+          "props": {
+            "text": "Báo cáo yêu cầu đổi lịch hẹn – Khoa Nội tổng quát",
+            "level": 1
+          }
+        },
+        {
+          "id": "main_columns",
+          "type": "Row",
+          "props": {
+            "gap": "lg",
+            "align": "start"
+          },
+          "children": [
+            {
+              "id": "col_filters",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "card_filters",
+                  "type": "Card",
+                  "props": {
+                    "title": "Bộ lọc"
+                  },
+                  "children": [
+                    {
+                      "id": "filter_doctor",
+                      "type": "Select",
+                      "props": {
+                        "label": "Bác sĩ",
+                        "name": "doctor",
+                        "options": [
+                          "Tất cả bác sĩ",
+                          "BS. Nguyễn Văn Hùng",
+                          "BS. Trần Thị Mai",
+                          "BS. Lê Quốc Bảo"
+                        ]
+                      }
+                    },
+                    {
+                      "id": "filter_from",
+                      "type": "DatePicker",
+                      "props": {
+                        "label": "Ngày khám từ",
+                        "name": "from_date"
+                      }
+                    },
+                    {
+                      "id": "filter_to",
+                      "type": "DatePicker",
+                      "props": {
+                        "label": "Ngày khám đến",
+                        "name": "to_date"
+                      }
+                    },
+                    {
+                      "id": "filter_status",
+                      "type": "Select",
+                      "props": {
+                        "label": "Trạng thái",
+                        "name": "status",
+                        "options": [
+                          "Chờ duyệt",
+                          "Đã duyệt",
+                          "Đã từ chối",
+                          "Tất cả"
+                        ]
+                      }
+                    },
+                    {
+                      "id": "btn_apply",
+                      "type": "Button",
+                      "props": {
+                        "label": "Áp dụng",
+                        "variant": "primary",
+                        "action": "apply_filters"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "card_summary",
+                  "type": "Card",
+                  "props": {
+                    "title": "Tổng hợp kỳ lọc"
+                  },
+                  "children": [
+                    {
+                      "id": "stat_pending",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Chờ duyệt",
+                        "value": "14"
+                      }
+                    },
+                    {
+                      "id": "stat_approved",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Đã duyệt",
+                        "value": "37"
+                      }
+                    },
+                    {
+                      "id": "stat_rejected",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Đã từ chối",
+                        "value": "5"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "col_table",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "table_requests",
+                  "type": "Table",
+                  "props": {
+                    "columns": [
+                      "Mã yêu cầu",
+                      "Bệnh nhân",
+                      "Bác sĩ",
+                      "Lịch hiện tại",
+                      "Lịch đề xuất",
+                      "Lý do đổi",
+                      "Trạng thái"
+                    ],
+                    "rows": [
+                      [
+                        "YC-1042",
+                        "Phạm Thu Hà",
+                        "BS. Nguyễn Văn Hùng",
+                        "20/10/2026 08:30",
+                        "22/10/2026 14:00",
+                        "Bận công tác",
+                        "Chờ duyệt"
+                      ],
+                      [
+                        "YC-1043",
+                        "Đỗ Minh Khang",
+                        "BS. Trần Thị Mai",
+                        "21/10/2026 09:15",
+                        "21/10/2026 15:30",
+                        "Trùng lịch học",
+                        "Chờ duyệt"
+                      ],
+                      [
+                        "YC-1039",
+                        "Võ Thị Lan",
+                        "BS. Lê Quốc Bảo",
+                        "19/10/2026 10:00",
+                        "23/10/2026 10:00",
+                        "Đang điều trị nơi khác",
+                        "Đã duyệt"
+                      ]
+                    ],
+                    "rowActions": [
+                      "Duyệt",
+                      "Từ chối"
+                    ]
+                  }
+                },
+                {
+                  "id": "table_pagination",
+                  "type": "Pagination",
+                  "props": {
+                    "pages": 3
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modal_reject",
+          "type": "Modal",
+          "props": {
+            "title": "Từ chối yêu cầu YC-1042",
+            "open": false
+          },
+          "children": [
+            {
+              "id": "reject_hint",
+              "type": "Text",
+              "props": {
+                "text": "Lý do sẽ được gửi tới bệnh nhân Phạm Thu Hà qua SMS và email."
+              }
+            },
+            {
+              "id": "input_reject_reason",
+              "type": "Textarea",
+              "props": {
+                "label": "Lý do từ chối",
+                "name": "reject_reason",
+                "placeholder": "Vd: Bác sĩ không có lịch khám vào khung giờ đề xuất",
+                "required": true,
+                "maxLength": 300
+              }
+            },
+            {
+              "id": "reject_actions",
+              "type": "Row",
+              "props": {
+                "gap": "sm",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_cancel_reject",
+                  "type": "Button",
+                  "props": {
+                    "label": "Hủy",
+                    "variant": "secondary",
+                    "action": "close_modal"
+                  }
+                },
+                {
+                  "id": "btn_confirm_reject",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xác nhận từ chối",
+                    "variant": "danger",
+                    "action": "reject_request"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R012",
+    "requirement": {
+      "title": "Hóa đơn đầu vào của tôi – cổng nhà cung cấp",
+      "actor": "Nhân viên kế toán của nhà cung cấp",
+      "description": "Nhà cung cấp xem danh sách các hóa đơn mà chính mình đã nộp cho công ty, tìm theo số hóa đơn, lọc theo trạng thái thanh toán và khoảng ngày lập. Từ thanh tiêu đề có thể nộp hóa đơn mới; với hóa đơn còn ở trạng thái Nháp có thể sửa hoặc xóa.",
+      "permissions": [
+        "Chỉ thao tác trên bản ghi của chính mình: chỉ thấy, nộp, sửa, xóa hóa đơn do tài khoản nhà cung cấp mình tạo",
+        "Chỉ sửa/xóa hóa đơn ở trạng thái Nháp"
+      ],
+      "rules": [
+        "Danh sách tự lọc theo mã nhà cung cấp của tài khoản đăng nhập",
+        "Ngày lập từ không được sau ngày lập đến",
+        "Số tiền hiển thị theo VNĐ, đã gồm VAT",
+        "Phân trang 20 hóa đơn mỗi trang"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Hóa đơn của tôi"
+      },
+      "children": [
+        {
+          "id": "page_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "title_invoices",
+              "type": "Heading",
+              "props": {
+                "text": "Hóa đơn của tôi",
+                "level": 1
+              }
+            },
+            {
+              "id": "btn_submit_invoice",
+              "type": "Button",
+              "props": {
+                "label": "Nộp hóa đơn mới",
+                "variant": "primary",
+                "action": "open_invoice_create"
+              }
+            }
+          ]
+        },
+        {
+          "id": "section_content",
+          "type": "Section",
+          "props": {},
+          "children": [
+            {
+              "id": "filter_row",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "search_invoice_no",
+                  "type": "Input",
+                  "props": {
+                    "label": "Số hóa đơn",
+                    "name": "invoice_no",
+                    "placeholder": "Vd: 0001258",
+                    "inputType": "text"
+                  }
+                },
+                {
+                  "id": "filter_payment_status",
+                  "type": "Select",
+                  "props": {
+                    "label": "Trạng thái",
+                    "name": "payment_status",
+                    "options": [
+                      "Tất cả",
+                      "Nháp",
+                      "Đã nộp",
+                      "Đang đối chiếu",
+                      "Đã thanh toán",
+                      "Bị trả lại"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_issue_from",
+                  "type": "DatePicker",
+                  "props": {
+                    "label": "Ngày lập từ",
+                    "name": "issue_from"
+                  }
+                },
+                {
+                  "id": "filter_issue_to",
+                  "type": "DatePicker",
+                  "props": {
+                    "label": "Ngày lập đến",
+                    "name": "issue_to"
+                  }
+                },
+                {
+                  "id": "btn_filter",
+                  "type": "Button",
+                  "props": {
+                    "label": "Lọc",
+                    "variant": "secondary",
+                    "action": "apply_filters"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "table_invoices",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Số hóa đơn",
+                  "Ký hiệu",
+                  "Ngày lập",
+                  "Đơn đặt hàng",
+                  "Tổng tiền (VNĐ)",
+                  "Hạn thanh toán",
+                  "Trạng thái"
+                ],
+                "rows": [
+                  [
+                    "0001258",
+                    "1C26TAA",
+                    "10/10/2026",
+                    "PO-2026-0412",
+                    "48.950.000",
+                    "09/11/2026",
+                    "Đang đối chiếu"
+                  ],
+                  [
+                    "0001261",
+                    "1C26TAA",
+                    "14/10/2026",
+                    "PO-2026-0430",
+                    "12.320.000",
+                    "13/11/2026",
+                    "Nháp"
+                  ],
+                  [
+                    "0001190",
+                    "1C26TAA",
+                    "28/09/2026",
+                    "PO-2026-0377",
+                    "105.600.000",
+                    "28/10/2026",
+                    "Đã thanh toán"
+                  ]
+                ],
+                "rowActions": [
+                  "Xem",
+                  "Sửa",
+                  "Xóa"
+                ]
+              }
+            },
+            {
+              "id": "invoice_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 6
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R017",
+    "requirement": {
+      "title": "Tổng quan vận hành hỗ trợ khách hàng",
+      "actor": "Trưởng nhóm chăm sóc khách hàng",
+      "description": "Trưởng nhóm theo dõi các chỉ số chính của bộ phận hỗ trợ trong kỳ đã chọn: số ticket đang mở, ticket quá hạn SLA, thời gian phản hồi đầu tiên trung bình và điểm hài lòng. Bảng bên dưới liệt kê các ticket sắp hoặc đã quá hạn SLA để theo dõi; màn hình chỉ dùng để xem.",
+      "permissions": [
+        "Chỉ xem số liệu và danh sách ticket",
+        "Không phân công, sửa, đóng hay xóa ticket trên màn này"
+      ],
+      "rules": [
+        "Chỉ số tính theo kỳ đã chọn (mặc định 7 ngày gần nhất)",
+        "Ticket sắp quá hạn: còn dưới 2 giờ tới hạn SLA",
+        "Bảng sắp xếp theo thời gian còn lại tăng dần"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Tổng quan hỗ trợ khách hàng"
+      },
+      "children": [
+        {
+          "id": "layout_row",
+          "type": "Row",
+          "props": {
+            "gap": "none",
+            "align": "stretch"
+          },
+          "children": [
+            {
+              "id": "nav_sidebar",
+              "type": "Sidebar",
+              "props": {},
+              "children": [
+                {
+                  "id": "nav_brand",
+                  "type": "Text",
+                  "props": {
+                    "text": "Trung tâm hỗ trợ"
+                  }
+                },
+                {
+                  "id": "nav_overview",
+                  "type": "Link",
+                  "props": {
+                    "text": "Tổng quan",
+                    "navigateTo": "/support/overview"
+                  }
+                },
+                {
+                  "id": "nav_tickets",
+                  "type": "Link",
+                  "props": {
+                    "text": "Danh sách ticket",
+                    "navigateTo": "/support/tickets"
+                  }
+                },
+                {
+                  "id": "nav_sla",
+                  "type": "Link",
+                  "props": {
+                    "text": "Báo cáo SLA",
+                    "navigateTo": "/support/sla"
+                  }
+                },
+                {
+                  "id": "nav_csat",
+                  "type": "Link",
+                  "props": {
+                    "text": "Khảo sát hài lòng",
+                    "navigateTo": "/support/csat"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "main_content",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "overview_head",
+                  "type": "Row",
+                  "props": {
+                    "gap": "md",
+                    "align": "center"
+                  },
+                  "children": [
+                    {
+                      "id": "title_overview",
+                      "type": "Heading",
+                      "props": {
+                        "text": "Tổng quan hỗ trợ",
+                        "level": 1
+                      }
+                    },
+                    {
+                      "id": "filter_period",
+                      "type": "Select",
+                      "props": {
+                        "label": "Kỳ thống kê",
+                        "name": "period",
+                        "options": [
+                          "7 ngày gần nhất",
+                          "Hôm nay",
+                          "30 ngày gần nhất",
+                          "Tháng này"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "stats_row",
+                  "type": "Row",
+                  "props": {
+                    "gap": "md"
+                  },
+                  "children": [
+                    {
+                      "id": "stat_open",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Ticket đang mở",
+                        "value": "126"
+                      }
+                    },
+                    {
+                      "id": "stat_overdue",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Quá hạn SLA",
+                        "value": "9"
+                      }
+                    },
+                    {
+                      "id": "stat_first_response",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Phản hồi đầu tiên TB",
+                        "value": "38 phút"
+                      }
+                    },
+                    {
+                      "id": "stat_csat",
+                      "type": "Stat",
+                      "props": {
+                        "label": "Điểm hài lòng (CSAT)",
+                        "value": "4,6/5"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "section_sla",
+                  "type": "Section",
+                  "props": {
+                    "title": "Ticket sắp hoặc đã quá hạn SLA"
+                  },
+                  "children": [
+                    {
+                      "id": "table_sla",
+                      "type": "Table",
+                      "props": {
+                        "columns": [
+                          "Mã ticket",
+                          "Tiêu đề",
+                          "Khách hàng",
+                          "Mức ưu tiên",
+                          "Nhân viên phụ trách",
+                          "Còn lại"
+                        ],
+                        "rows": [
+                          [
+                            "TK-24102",
+                            "Không thanh toán được đơn hàng",
+                            "Công ty Minh Phát",
+                            "Khẩn cấp",
+                            "Lê Thu Trang",
+                            "Quá hạn 25 phút"
+                          ],
+                          [
+                            "TK-24098",
+                            "Sai thông tin xuất hóa đơn",
+                            "Nguyễn Hoàng Nam",
+                            "Cao",
+                            "Phạm Đức Anh",
+                            "45 phút"
+                          ],
+                          [
+                            "TK-24087",
+                            "Không nhận được email kích hoạt",
+                            "Trần Bích Ngọc",
+                            "Trung bình",
+                            "Lê Thu Trang",
+                            "1 giờ 30 phút"
+                          ]
+                        ],
+                        "rowActions": [
+                          "Xem chi tiết"
+                        ]
+                      }
+                    },
+                    {
+                      "id": "sla_pagination",
+                      "type": "Pagination",
+                      "props": {
+                        "pages": 2
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R022",
+    "requirement": {
+      "title": "Tổng quan tài khoản và đăng nhập hệ thống",
+      "actor": "Kiểm soát viên an ninh thông tin",
+      "description": "Kiểm soát viên xem tổng quan tình trạng tài khoản người dùng (tổng số, đang hoạt động, bị khóa) và số lần đăng nhập thất bại, cùng bảng nhật ký đăng nhập gần đây có lọc theo kết quả. Thanh tiêu đề có nút làm mới số liệu và xuất nhật ký ra tệp; màn hình không cho phép thay đổi tài khoản.",
+      "permissions": [
+        "Chỉ xem số liệu và nhật ký đăng nhập",
+        "Không tạo, sửa, khóa/mở khóa hay xóa tài khoản",
+        "Được xuất nhật ký đang hiển thị ra tệp CSV"
+      ],
+      "rules": [
+        "Đăng nhập thất bại tính trong 24 giờ gần nhất",
+        "Nhật ký giữ 90 ngày, mặc định hiển thị 24 giờ gần nhất",
+        "Tệp xuất chỉ gồm các dòng khớp bộ lọc hiện tại"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Tổng quan tài khoản"
+      },
+      "children": [
+        {
+          "id": "page_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "title_dashboard",
+              "type": "Heading",
+              "props": {
+                "text": "Tổng quan tài khoản & đăng nhập",
+                "level": 1
+              }
+            },
+            {
+              "id": "header_actions",
+              "type": "Row",
+              "props": {
+                "gap": "sm"
+              },
+              "children": [
+                {
+                  "id": "btn_refresh",
+                  "type": "Button",
+                  "props": {
+                    "label": "Làm mới",
+                    "variant": "ghost",
+                    "action": "refresh_data"
+                  }
+                },
+                {
+                  "id": "btn_export",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xuất nhật ký CSV",
+                    "variant": "secondary",
+                    "action": "export_login_log"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "last_updated",
+          "type": "Text",
+          "props": {
+            "text": "Cập nhật lúc 17/10/2026 08:15",
+            "tone": "muted"
+          }
+        },
+        {
+          "id": "stats_row",
+          "type": "Row",
+          "props": {
+            "gap": "md"
+          },
+          "children": [
+            {
+              "id": "card_total",
+              "type": "Card",
+              "props": {},
+              "children": [
+                {
+                  "id": "stat_total_users",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Tổng tài khoản",
+                    "value": "1.248"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "card_active",
+              "type": "Card",
+              "props": {},
+              "children": [
+                {
+                  "id": "stat_active_users",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Đang hoạt động",
+                    "value": "1.192"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "card_locked",
+              "type": "Card",
+              "props": {},
+              "children": [
+                {
+                  "id": "stat_locked_users",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Bị khóa",
+                    "value": "31"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "card_failed",
+              "type": "Card",
+              "props": {},
+              "children": [
+                {
+                  "id": "stat_failed_logins",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Đăng nhập thất bại (24 giờ)",
+                    "value": "57"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "section_login_log",
+          "type": "Section",
+          "props": {
+            "title": "Nhật ký đăng nhập gần đây"
+          },
+          "children": [
+            {
+              "id": "log_filters",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "search_user",
+                  "type": "Input",
+                  "props": {
+                    "label": "Tài khoản",
+                    "name": "username",
+                    "placeholder": "Tên đăng nhập hoặc email",
+                    "inputType": "text"
+                  }
+                },
+                {
+                  "id": "filter_result",
+                  "type": "Select",
+                  "props": {
+                    "label": "Kết quả",
+                    "name": "login_result",
+                    "options": [
+                      "Tất cả",
+                      "Thành công",
+                      "Sai mật khẩu",
+                      "Tài khoản bị khóa",
+                      "Sai mã OTP"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_range",
+                  "type": "Select",
+                  "props": {
+                    "label": "Khoảng thời gian",
+                    "name": "time_range",
+                    "options": [
+                      "24 giờ gần nhất",
+                      "7 ngày gần nhất",
+                      "30 ngày gần nhất",
+                      "90 ngày gần nhất"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "table_login_log",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Thời gian",
+                  "Tài khoản",
+                  "Vai trò",
+                  "Địa chỉ IP",
+                  "Thiết bị",
+                  "Kết quả"
+                ],
+                "rows": [
+                  [
+                    "17/10/2026 08:02",
+                    "hoa.nguyen@congty.vn",
+                    "Kế toán",
+                    "113.161.42.18",
+                    "Chrome / Windows",
+                    "Thành công"
+                  ],
+                  [
+                    "17/10/2026 07:58",
+                    "tuan.le@congty.vn",
+                    "Quản lý kho",
+                    "27.72.105.3",
+                    "Safari / iOS",
+                    "Sai mật khẩu"
+                  ],
+                  [
+                    "17/10/2026 07:41",
+                    "admin.it@congty.vn",
+                    "Quản trị hệ thống",
+                    "10.0.12.5",
+                    "Firefox / Ubuntu",
+                    "Thành công"
+                  ]
+                ]
+              }
+            },
+            {
+              "id": "log_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R027",
+    "requirement": {
+      "title": "Duyệt đơn nghỉ phép của nhân viên",
+      "actor": "Quản lý trực tiếp",
+      "description": "Quản lý xem danh sách đơn nghỉ phép do nhân viên trong nhóm gửi, tìm theo tên hoặc mã nhân viên, lọc theo loại nghỉ và trạng thái, và phân trang. Với đơn đang chờ, quản lý duyệt hoặc từ chối; kết quả được thông báo cho nhân viên và cập nhật số ngày phép còn lại.",
+      "permissions": [
+        "Chỉ được duyệt/từ chối đơn nghỉ phép",
+        "Không tạo, sửa nội dung đơn hay số ngày phép của nhân viên"
+      ],
+      "rules": [
+        "Chỉ hiển thị đơn của nhân viên thuộc nhóm mình quản lý",
+        "Thao tác Duyệt/Từ chối chỉ áp dụng với đơn ở trạng thái Chờ duyệt",
+        "Không duyệt được nếu số ngày xin nghỉ vượt số ngày phép còn lại (với loại Phép năm)"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Duyệt đơn nghỉ phép"
+      },
+      "children": [
+        {
+          "id": "card_leave",
+          "type": "Card",
+          "props": {
+            "title": "Đơn nghỉ phép chờ duyệt"
+          },
+          "children": [
+            {
+              "id": "card_head",
+              "type": "Row",
+              "props": {
+                "gap": "sm",
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "team_name",
+                  "type": "Text",
+                  "props": {
+                    "text": "Nhóm Phát triển sản phẩm"
+                  }
+                },
+                {
+                  "id": "badge_pending",
+                  "type": "Badge",
+                  "props": {
+                    "text": "8 đơn chờ duyệt",
+                    "tone": "warning"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "filter_row",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "search_employee",
+                  "type": "Input",
+                  "props": {
+                    "label": "Nhân viên",
+                    "name": "employee_keyword",
+                    "placeholder": "Tên hoặc mã nhân viên",
+                    "inputType": "text"
+                  }
+                },
+                {
+                  "id": "filter_leave_type",
+                  "type": "Select",
+                  "props": {
+                    "label": "Loại nghỉ",
+                    "name": "leave_type",
+                    "options": [
+                      "Tất cả",
+                      "Phép năm",
+                      "Nghỉ ốm",
+                      "Nghỉ không lương",
+                      "Nghỉ việc riêng có lương"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_status",
+                  "type": "Select",
+                  "props": {
+                    "label": "Trạng thái",
+                    "name": "status",
+                    "options": [
+                      "Chờ duyệt",
+                      "Đã duyệt",
+                      "Đã từ chối",
+                      "Tất cả"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "table_leave_requests",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Mã NV",
+                  "Họ tên",
+                  "Loại nghỉ",
+                  "Từ ngày",
+                  "Đến ngày",
+                  "Số ngày",
+                  "Phép còn lại",
+                  "Lý do",
+                  "Trạng thái"
+                ],
+                "rows": [
+                  [
+                    "NV0231",
+                    "Hoàng Văn Sơn",
+                    "Phép năm",
+                    "27/10/2026",
+                    "29/10/2026",
+                    "3",
+                    "9",
+                    "Về quê có việc gia đình",
+                    "Chờ duyệt"
+                  ],
+                  [
+                    "NV0187",
+                    "Ngô Thị Hạnh",
+                    "Nghỉ ốm",
+                    "20/10/2026",
+                    "21/10/2026",
+                    "2",
+                    "5",
+                    "Sốt xuất huyết, có giấy bác sĩ",
+                    "Chờ duyệt"
+                  ],
+                  [
+                    "NV0254",
+                    "Bùi Quang Huy",
+                    "Nghỉ việc riêng có lương",
+                    "02/11/2026",
+                    "02/11/2026",
+                    "1",
+                    "12",
+                    "Kết hôn",
+                    "Chờ duyệt"
+                  ]
+                ],
+                "rowActions": [
+                  "Duyệt",
+                  "Từ chối"
+                ]
+              }
+            },
+            {
+              "id": "leave_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R032",
+    "requirement": {
+      "title": "Báo cáo lượt khám theo bác sĩ",
+      "actor": "Giám đốc chuyên môn bệnh viện",
+      "description": "Giám đốc chuyên môn xem báo cáo dạng bảng số lịch hẹn, số lượt đã khám, hủy và không đến của từng bác sĩ trong khoảng thời gian và khoa đã chọn, kèm dòng tổng cộng. Có thể xuất báo cáo ra Excel; màn hình chỉ dùng để xem, không chỉnh sửa lịch hẹn.",
+      "permissions": [
+        "Chỉ xem báo cáo",
+        "Được xuất báo cáo ra Excel",
+        "Không thêm, sửa, xóa lịch hẹn"
+      ],
+      "rules": [
+        "Khoảng thời gian bắt buộc, tối đa 12 tháng",
+        "Tỷ lệ hoàn thành = Đã khám / Số lịch hẹn",
+        "Dòng tổng cộng tính trên toàn bộ kết quả lọc, không chỉ trang hiện tại"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Báo cáo lượt khám theo bác sĩ"
+      },
+      "children": [
+        {
+          "id": "layout_row",
+          "type": "Row",
+          "props": {
+            "gap": "none",
+            "align": "stretch"
+          },
+          "children": [
+            {
+              "id": "nav_sidebar",
+              "type": "Sidebar",
+              "props": {},
+              "children": [
+                {
+                  "id": "nav_dashboard",
+                  "type": "Link",
+                  "props": {
+                    "text": "Bảng điều khiển",
+                    "navigateTo": "/reports"
+                  }
+                },
+                {
+                  "id": "nav_visits_by_doctor",
+                  "type": "Link",
+                  "props": {
+                    "text": "Lượt khám theo bác sĩ",
+                    "navigateTo": "/reports/visits-by-doctor"
+                  }
+                },
+                {
+                  "id": "nav_visits_by_department",
+                  "type": "Link",
+                  "props": {
+                    "text": "Lượt khám theo khoa",
+                    "navigateTo": "/reports/visits-by-department"
+                  }
+                },
+                {
+                  "id": "nav_no_show",
+                  "type": "Link",
+                  "props": {
+                    "text": "Tỷ lệ không đến",
+                    "navigateTo": "/reports/no-show"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "main_content",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "title_report",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Báo cáo lượt khám theo bác sĩ",
+                    "level": 1
+                  }
+                },
+                {
+                  "id": "report_filter_form",
+                  "type": "Form",
+                  "props": {
+                    "submitAction": "run_report"
+                  },
+                  "children": [
+                    {
+                      "id": "filter_row",
+                      "type": "Row",
+                      "props": {
+                        "gap": "md",
+                        "align": "end"
+                      },
+                      "children": [
+                        {
+                          "id": "filter_from",
+                          "type": "DatePicker",
+                          "props": {
+                            "label": "Từ ngày",
+                            "name": "from_date",
+                            "required": true
+                          }
+                        },
+                        {
+                          "id": "filter_to",
+                          "type": "DatePicker",
+                          "props": {
+                            "label": "Đến ngày",
+                            "name": "to_date",
+                            "required": true
+                          }
+                        },
+                        {
+                          "id": "filter_department",
+                          "type": "Select",
+                          "props": {
+                            "label": "Khoa",
+                            "name": "department",
+                            "options": [
+                              "Tất cả khoa",
+                              "Nội tổng quát",
+                              "Nhi",
+                              "Tai Mũi Họng",
+                              "Da liễu"
+                            ]
+                          }
+                        },
+                        {
+                          "id": "btn_run",
+                          "type": "Button",
+                          "props": {
+                            "label": "Xem báo cáo",
+                            "variant": "primary",
+                            "action": "run_report"
+                          }
+                        },
+                        {
+                          "id": "btn_export",
+                          "type": "Button",
+                          "props": {
+                            "label": "Xuất Excel",
+                            "variant": "secondary",
+                            "action": "export_excel"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "report_period",
+                  "type": "Text",
+                  "props": {
+                    "text": "Kỳ báo cáo: 01/09/2026 – 30/09/2026 · Tất cả khoa",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "table_report",
+                  "type": "Table",
+                  "props": {
+                    "columns": [
+                      "Bác sĩ",
+                      "Khoa",
+                      "Số lịch hẹn",
+                      "Đã khám",
+                      "Hủy",
+                      "Không đến",
+                      "Tỷ lệ hoàn thành"
+                    ],
+                    "rows": [
+                      [
+                        "BS. Nguyễn Văn Hùng",
+                        "Nội tổng quát",
+                        "412",
+                        "371",
+                        "26",
+                        "15",
+                        "90,0%"
+                      ],
+                      [
+                        "BS. Trần Thị Mai",
+                        "Nhi",
+                        "389",
+                        "342",
+                        "31",
+                        "16",
+                        "87,9%"
+                      ],
+                      [
+                        "BS. Lê Quốc Bảo",
+                        "Tai Mũi Họng",
+                        "265",
+                        "239",
+                        "14",
+                        "12",
+                        "90,2%"
+                      ],
+                      [
+                        "Tổng cộng (18 bác sĩ)",
+                        "",
+                        "4.870",
+                        "4.312",
+                        "341",
+                        "217",
+                        "88,5%"
+                      ]
+                    ]
+                  }
+                },
+                {
+                  "id": "report_pagination",
+                  "type": "Pagination",
+                  "props": {
+                    "pages": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R037",
+    "requirement": {
+      "title": "Tra cứu và quản lý phiếu chi",
+      "actor": "Kế toán thanh toán",
+      "description": "Kế toán tra cứu phiếu chi theo số phiếu, đối tượng nhận tiền và khoảng ngày chi. Kết quả hiển thị trong bảng với số tiền và hình thức chi; kế toán có thể thêm phiếu chi mới, xem, sửa hoặc xóa phiếu chi (xóa cần xác nhận).",
+      "permissions": [
+        "Toàn quyền: xem, thêm, sửa, xóa phiếu chi"
+      ],
+      "rules": [
+        "Nhập ít nhất một tiêu chí trước khi tra cứu",
+        "Không sửa/xóa phiếu chi thuộc kỳ kế toán đã khóa sổ",
+        "Xóa phiếu chi phải xác nhận, thao tác không hoàn tác"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Tra cứu phiếu chi"
+      },
+      "children": [
+        {
+          "id": "card_lookup",
+          "type": "Card",
+          "props": {
+            "title": "Tra cứu phiếu chi"
+          },
+          "children": [
+            {
+              "id": "lookup_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "search_payment_vouchers"
+              },
+              "children": [
+                {
+                  "id": "criteria_row_1",
+                  "type": "Row",
+                  "props": {
+                    "gap": "md"
+                  },
+                  "children": [
+                    {
+                      "id": "input_voucher_no",
+                      "type": "Input",
+                      "props": {
+                        "label": "Số phiếu chi",
+                        "name": "voucher_no",
+                        "placeholder": "Vd: PC-2026-0815",
+                        "inputType": "text"
+                      }
+                    },
+                    {
+                      "id": "input_payee",
+                      "type": "Input",
+                      "props": {
+                        "label": "Đối tượng nhận",
+                        "name": "payee",
+                        "placeholder": "Tên nhà cung cấp hoặc nhân viên",
+                        "inputType": "text"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "criteria_row_2",
+                  "type": "Row",
+                  "props": {
+                    "gap": "md",
+                    "align": "end"
+                  },
+                  "children": [
+                    {
+                      "id": "input_date_from",
+                      "type": "DatePicker",
+                      "props": {
+                        "label": "Ngày chi từ",
+                        "name": "date_from"
+                      }
+                    },
+                    {
+                      "id": "input_date_to",
+                      "type": "DatePicker",
+                      "props": {
+                        "label": "Ngày chi đến",
+                        "name": "date_to"
+                      }
+                    },
+                    {
+                      "id": "btn_search",
+                      "type": "Button",
+                      "props": {
+                        "label": "Tra cứu",
+                        "variant": "primary",
+                        "action": "search_payment_vouchers"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "divider_results",
+              "type": "Divider",
+              "props": {}
+            },
+            {
+              "id": "results_head",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "result_count",
+                  "type": "Text",
+                  "props": {
+                    "text": "Tìm thấy 24 phiếu chi"
+                  }
+                },
+                {
+                  "id": "btn_add_voucher",
+                  "type": "Button",
+                  "props": {
+                    "label": "Thêm phiếu chi",
+                    "variant": "secondary",
+                    "action": "open_voucher_create"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "table_vouchers",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Số phiếu",
+                  "Ngày chi",
+                  "Đối tượng nhận",
+                  "Nội dung chi",
+                  "Hình thức",
+                  "Số tiền (VNĐ)"
+                ],
+                "rows": [
+                  [
+                    "PC-2026-0815",
+                    "15/10/2026",
+                    "Công ty TNHH Văn phòng phẩm Hồng Hà",
+                    "Mua văn phòng phẩm quý IV",
+                    "Chuyển khoản",
+                    "8.640.000"
+                  ],
+                  [
+                    "PC-2026-0812",
+                    "14/10/2026",
+                    "Nguyễn Thị Thu",
+                    "Hoàn ứng công tác phí Đà Nẵng",
+                    "Tiền mặt",
+                    "3.250.000"
+                  ],
+                  [
+                    "PC-2026-0807",
+                    "11/10/2026",
+                    "Công ty CP Điện lực Hà Nội",
+                    "Tiền điện tháng 9/2026",
+                    "Chuyển khoản",
+                    "14.920.000"
+                  ]
+                ],
+                "rowActions": [
+                  "Xem",
+                  "Sửa",
+                  "Xóa"
+                ]
+              }
+            },
+            {
+              "id": "voucher_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "modal_confirm_delete",
+          "type": "Modal",
+          "props": {
+            "title": "Xóa phiếu chi PC-2026-0815?",
+            "open": false
+          },
+          "children": [
+            {
+              "id": "delete_warning",
+              "type": "Alert",
+              "props": {
+                "text": "Phiếu chi sẽ bị xóa vĩnh viễn và bút toán liên quan bị hủy. Thao tác không thể hoàn tác.",
+                "tone": "warning"
+              }
+            },
+            {
+              "id": "delete_actions",
+              "type": "Row",
+              "props": {
+                "gap": "sm",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_cancel_delete",
+                  "type": "Button",
+                  "props": {
+                    "label": "Hủy",
+                    "variant": "secondary",
+                    "action": "close_modal"
+                  }
+                },
+                {
+                  "id": "btn_confirm_delete",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xóa phiếu chi",
+                    "variant": "danger",
+                    "action": "delete_voucher"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R042",
+    "requirement": {
+      "title": "Danh sách ticket hỗ trợ (chế độ xem)",
+      "actor": "Nhân viên kiểm soát chất lượng dịch vụ",
+      "description": "Nhân viên QA xem toàn bộ ticket hỗ trợ, tìm theo mã, tiêu đề hoặc email khách hàng, lọc theo trạng thái, mức ưu tiên, kênh tiếp nhận và nhân viên phụ trách, có phân trang. Có thể mở chi tiết ticket để đánh giá chất lượng xử lý; không được thay đổi ticket.",
+      "permissions": [
+        "Chỉ xem danh sách và chi tiết ticket",
+        "Không tạo, sửa, phân công, đóng hay xóa ticket"
+      ],
+      "rules": [
+        "Mặc định sắp xếp theo ngày tạo mới nhất",
+        "Phân trang 25 ticket mỗi trang",
+        "Có nút đặt lại bộ lọc để về trạng thái mặc định"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Danh sách ticket"
+      },
+      "children": [
+        {
+          "id": "title_tickets",
+          "type": "Heading",
+          "props": {
+            "text": "Danh sách ticket hỗ trợ",
+            "level": 1
+          }
+        },
+        {
+          "id": "subtitle",
+          "type": "Text",
+          "props": {
+            "text": "Chế độ chỉ xem dành cho kiểm soát chất lượng",
+            "tone": "muted"
+          }
+        },
+        {
+          "id": "section_filters",
+          "type": "Section",
+          "props": {},
+          "children": [
+            {
+              "id": "search_ticket",
+              "type": "Input",
+              "props": {
+                "label": "Tìm kiếm",
+                "name": "keyword",
+                "placeholder": "Mã ticket, tiêu đề hoặc email khách hàng",
+                "inputType": "text"
+              }
+            },
+            {
+              "id": "filter_row",
+              "type": "Row",
+              "props": {
+                "gap": "md",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "filter_status",
+                  "type": "Select",
+                  "props": {
+                    "label": "Trạng thái",
+                    "name": "status",
+                    "options": [
+                      "Tất cả",
+                      "Mới",
+                      "Đang xử lý",
+                      "Chờ khách phản hồi",
+                      "Đã giải quyết",
+                      "Đã đóng"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_priority",
+                  "type": "Select",
+                  "props": {
+                    "label": "Mức ưu tiên",
+                    "name": "priority",
+                    "options": [
+                      "Tất cả",
+                      "Khẩn cấp",
+                      "Cao",
+                      "Trung bình",
+                      "Thấp"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_channel",
+                  "type": "Select",
+                  "props": {
+                    "label": "Kênh tiếp nhận",
+                    "name": "channel",
+                    "options": [
+                      "Tất cả",
+                      "Email",
+                      "Hotline",
+                      "Chat trực tuyến",
+                      "Zalo OA"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_agent",
+                  "type": "Select",
+                  "props": {
+                    "label": "Nhân viên phụ trách",
+                    "name": "agent",
+                    "options": [
+                      "Tất cả",
+                      "Lê Thu Trang",
+                      "Phạm Đức Anh",
+                      "Vũ Hải Yến"
+                    ]
+                  }
+                },
+                {
+                  "id": "btn_clear_filters",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đặt lại bộ lọc",
+                    "variant": "ghost",
+                    "action": "reset_filters"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "table_tickets",
+          "type": "Table",
+          "props": {
+            "columns": [
+              "Mã ticket",
+              "Tiêu đề",
+              "Khách hàng",
+              "Kênh",
+              "Mức ưu tiên",
+              "Phụ trách",
+              "Trạng thái",
+              "Ngày tạo"
+            ],
+            "rows": [
+              [
+                "TK-24110",
+                "Đổi địa chỉ giao hàng",
+                "le.minh@gmail.com",
+                "Chat trực tuyến",
+                "Trung bình",
+                "Vũ Hải Yến",
+                "Đang xử lý",
+                "17/10/2026"
+              ],
+              [
+                "TK-24102",
+                "Không thanh toán được đơn hàng",
+                "ketoan@minhphat.vn",
+                "Hotline",
+                "Khẩn cấp",
+                "Lê Thu Trang",
+                "Đang xử lý",
+                "16/10/2026"
+              ],
+              [
+                "TK-24095",
+                "Yêu cầu hoàn tiền đơn trả lại",
+                "ngoc.tb@yahoo.com",
+                "Email",
+                "Cao",
+                "Phạm Đức Anh",
+                "Đã giải quyết",
+                "16/10/2026"
+              ]
+            ],
+            "rowActions": [
+              "Xem chi tiết"
+            ]
+          }
+        },
+        {
+          "id": "table_footer",
+          "type": "Row",
+          "props": {
+            "gap": "md",
+            "align": "center"
+          },
+          "children": [
+            {
+              "id": "total_count",
+              "type": "Text",
+              "props": {
+                "text": "Hiển thị 1–25 trên 1.342 ticket",
+                "tone": "muted"
+              }
+            },
+            {
+              "id": "ticket_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 54
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R047",
+    "requirement": {
+      "title": "Báo cáo khối lượng công việc theo thành viên trong sprint",
+      "actor": "Thành viên ban điều hành dự án",
+      "description": "Từ trang dự án, người dùng mở hộp thoại báo cáo khối lượng công việc của từng thành viên trong sprint đã chọn: số công việc được giao, hoàn thành, đang làm, quá hạn và giờ ước tính so với giờ thực tế. Báo cáo chỉ để xem; có thể xuất PDF và đóng hộp thoại để quay lại trang dự án.",
+      "permissions": [
+        "Chỉ xem báo cáo",
+        "Được xuất PDF",
+        "Không giao, sửa hay xóa công việc"
+      ],
+      "rules": [
+        "Mặc định hiển thị sprint đang chạy",
+        "Công việc quá hạn: chưa hoàn thành và đã qua hạn chót",
+        "Giờ thực tế lấy từ nhật ký thời gian đã ghi"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Dự án Cổng thanh toán điện tử"
+      },
+      "children": [
+        {
+          "id": "project_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "title_project",
+              "type": "Heading",
+              "props": {
+                "text": "Dự án Cổng thanh toán điện tử",
+                "level": 1
+              }
+            },
+            {
+              "id": "badge_sprint",
+              "type": "Badge",
+              "props": {
+                "text": "Sprint 14 · đang chạy",
+                "tone": "info"
+              }
+            }
+          ]
+        },
+        {
+          "id": "section_project_info",
+          "type": "Section",
+          "props": {
+            "title": "Thông tin sprint"
+          },
+          "children": [
+            {
+              "id": "sprint_dates",
+              "type": "Text",
+              "props": {
+                "text": "Sprint 14: 06/10/2026 – 19/10/2026 · 6 thành viên · 48 công việc"
+              }
+            },
+            {
+              "id": "btn_open_report",
+              "type": "Button",
+              "props": {
+                "label": "Xem báo cáo khối lượng",
+                "variant": "secondary",
+                "action": "open_workload_report"
+              }
+            }
+          ]
+        },
+        {
+          "id": "modal_workload_report",
+          "type": "Modal",
+          "props": {
+            "title": "Báo cáo khối lượng công việc theo thành viên",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "select_sprint",
+              "type": "Select",
+              "props": {
+                "label": "Sprint",
+                "name": "sprint",
+                "options": [
+                  "Sprint 14 (06/10 – 19/10/2026)",
+                  "Sprint 13 (22/09 – 05/10/2026)",
+                  "Sprint 12 (08/09 – 21/09/2026)"
+                ]
+              }
+            },
+            {
+              "id": "table_workload",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Thành viên",
+                  "Vai trò",
+                  "Được giao",
+                  "Hoàn thành",
+                  "Đang làm",
+                  "Quá hạn",
+                  "Giờ ước tính",
+                  "Giờ thực tế"
+                ],
+                "rows": [
+                  [
+                    "Nguyễn Thành Long",
+                    "Backend",
+                    "11",
+                    "7",
+                    "3",
+                    "1",
+                    "64",
+                    "71"
+                  ],
+                  [
+                    "Đặng Mỹ Linh",
+                    "Frontend",
+                    "9",
+                    "6",
+                    "3",
+                    "0",
+                    "52",
+                    "48"
+                  ],
+                  [
+                    "Trịnh Gia Bảo",
+                    "Kiểm thử",
+                    "8",
+                    "5",
+                    "2",
+                    "1",
+                    "40",
+                    "43"
+                  ],
+                  [
+                    "Tổng cộng",
+                    "",
+                    "48",
+                    "31",
+                    "13",
+                    "4",
+                    "296",
+                    "305"
+                  ]
+                ]
+              }
+            },
+            {
+              "id": "report_note",
+              "type": "Text",
+              "props": {
+                "text": "Số liệu cập nhật lúc 17/10/2026 07:00 từ nhật ký thời gian.",
+                "tone": "muted"
+              }
+            },
+            {
+              "id": "modal_actions",
+              "type": "Row",
+              "props": {
+                "gap": "sm",
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_export_pdf",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xuất PDF",
+                    "variant": "secondary",
+                    "action": "export_pdf"
+                  }
+                },
+                {
+                  "id": "btn_close_report",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đóng",
+                    "variant": "primary",
+                    "action": "close_modal"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Bảng hiển thị 3/6 thành viên làm dữ liệu mẫu cùng dòng tổng của cả sprint; không phân trang vì một sprint có ít thành viên."
+  }
+]

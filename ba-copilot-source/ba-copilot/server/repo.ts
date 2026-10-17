@@ -393,3 +393,39 @@ export function countClaudeRunsToday(): number {
   const r = getDb().prepare("SELECT COUNT(*) AS n FROM prompt_runs WHERE provider = 'claude' AND created_at >= ?").get(start.toISOString()) as Row;
   return Number(r.n);
 }
+
+// ---------- Gợi ý thành phần (log Áp dụng / Bỏ qua để đo tỷ lệ chấp nhận) ----------
+export interface SuggestionEvent {
+  screenId: string;
+  versionId: string | null;
+  kind: string;
+  targetNodeId: string | null;
+  title: string;
+  confidence: number;
+  action: "shown" | "applied" | "dismissed";
+}
+
+export function logSuggestionEvent(e: SuggestionEvent): void {
+  getDb()
+    .prepare("INSERT INTO suggestion_events (id, screen_id, version_id, suggestion_kind, target_node_id, title, confidence, action, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .run(uid(), e.screenId, e.versionId, e.kind, e.targetNodeId, e.title, e.confidence, e.action, now());
+}
+
+export function suggestionStats(moduleId: string): { shown: number; applied: number; dismissed: number; acceptanceRate: number; byKind: Record<string, { shown: number; applied: number }> } {
+  const rows = getDb()
+    .prepare(
+      `SELECT e.suggestion_kind AS kind, e.action AS action, COUNT(*) AS n FROM suggestion_events e JOIN screens s ON s.id = e.screen_id
+       WHERE s.module_id = ? GROUP BY e.suggestion_kind, e.action`,
+    )
+    .all(moduleId) as Row[];
+  const t = { shown: 0, applied: 0, dismissed: 0 };
+  const byKind: Record<string, { shown: number; applied: number }> = {};
+  for (const r of rows) {
+    const n = Number(r.n);
+    t[r.action as keyof typeof t] += n;
+    const k = (byKind[r.kind] ??= { shown: 0, applied: 0 });
+    if (r.action === "shown") k.shown += n;
+    if (r.action === "applied") k.applied += n;
+  }
+  return { ...t, acceptanceRate: t.shown ? t.applied / t.shown : 0, byKind };
+}

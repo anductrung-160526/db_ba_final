@@ -15,7 +15,18 @@
     "e2e": "node scripts/build.mjs && node e2e/e2e.mjs",
     "seed": "tsx scripts/seed.ts",
     "bundle": "node scripts/bundle.mjs",
-    "start:prebuilt": "node dist/server.mjs"
+    "start:prebuilt": "node dist/server.mjs",
+    "build-corpus": "tsx scripts/build-corpus.ts",
+    "build-model": "tsx scripts/build-next-model.ts",
+    "eval-next": "tsx scripts/eval-next.ts",
+    "build-synthetic": "tsx scripts/build-synthetic.ts",
+    "export-tf-data": "tsx scripts/export-tf-data.ts",
+    "train-transformer": "python3 scripts/train_transformer.py",
+    "eval-transformer": "tsx scripts/eval-transformer.ts",
+    "eval-reference": "tsx scripts/eval-reference.ts",
+    "dataset:validate": "tsx scripts/dataset/validate-roots.ts dataset/roots/*.json",
+    "dataset:samples": "tsx scripts/dataset/build-samples.ts",
+    "dataset:export": "tsx scripts/dataset/export-train.ts"
   },
   "dependencies": {
     "docx": "^9.6.1",

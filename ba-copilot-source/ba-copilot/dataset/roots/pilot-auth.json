@@ -1,0 +1,1671 @@
+[
+  {
+    "id": "R001",
+    "requirement": {
+      "title": "Quên mật khẩu – cổng quản lý dự án",
+      "actor": "Thành viên dự án",
+      "description": "Thành viên dự án quên mật khẩu nhập email công việc đã đăng ký để nhận liên kết đặt lại mật khẩu. Cột trái giới thiệu ngắn các bước khôi phục, cột phải là biểu mẫu nhập email. Sau khi gửi, hệ thống luôn hiển thị cùng một thông báo trung tính và người dùng có thể quay lại trang đăng nhập.",
+      "permissions": [
+        "Chỉ yêu cầu khôi phục cho tài khoản của chính mình qua email đã đăng ký"
+      ],
+      "rules": [
+        "Email bắt buộc, đúng định dạng",
+        "Không tiết lộ email có tồn tại trong hệ thống hay không",
+        "Liên kết đặt lại có hiệu lực 30 phút và chỉ dùng được một lần",
+        "Tối đa 3 yêu cầu trong 15 phút cho cùng một email"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Quên mật khẩu"
+      },
+      "children": [
+        {
+          "id": "main_row",
+          "type": "Row",
+          "props": {
+            "gap": 48,
+            "align": "center"
+          },
+          "children": [
+            {
+              "id": "col_intro",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "intro_heading",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Khôi phục quyền truy cập dự án",
+                    "level": 1
+                  }
+                },
+                {
+                  "id": "steps_list",
+                  "type": "List",
+                  "props": {},
+                  "children": [
+                    {
+                      "id": "step_1",
+                      "type": "Text",
+                      "props": {
+                        "text": "1. Nhập email công việc bạn dùng để đăng nhập."
+                      }
+                    },
+                    {
+                      "id": "step_2",
+                      "type": "Text",
+                      "props": {
+                        "text": "2. Mở email và bấm vào liên kết đặt lại mật khẩu (hiệu lực 30 phút)."
+                      }
+                    },
+                    {
+                      "id": "step_3",
+                      "type": "Text",
+                      "props": {
+                        "text": "3. Tạo mật khẩu mới và đăng nhập lại vào các dự án của bạn."
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "col_form",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "forgot_card",
+                  "type": "Card",
+                  "props": {
+                    "title": "Quên mật khẩu?"
+                  },
+                  "children": [
+                    {
+                      "id": "forgot_form",
+                      "type": "Form",
+                      "props": {
+                        "submitAction": "request_password_reset"
+                      },
+                      "children": [
+                        {
+                          "id": "forgot_hint",
+                          "type": "Text",
+                          "props": {
+                            "text": "Chúng tôi sẽ gửi liên kết đặt lại mật khẩu đến email của bạn."
+                          }
+                        },
+                        {
+                          "id": "input_email",
+                          "type": "Input",
+                          "props": {
+                            "label": "Email công việc",
+                            "name": "email",
+                            "inputType": "email",
+                            "placeholder": "ten@congty.vn",
+                            "required": true,
+                            "maxLength": 254
+                          }
+                        },
+                        {
+                          "id": "btn_send_link",
+                          "type": "Button",
+                          "props": {
+                            "label": "Gửi liên kết đặt lại",
+                            "variant": "primary",
+                            "action": "submit"
+                          }
+                        },
+                        {
+                          "id": "spam_hint",
+                          "type": "Text",
+                          "props": {
+                            "text": "Không thấy email sau vài phút? Hãy kiểm tra hộp thư rác.",
+                            "tone": "muted"
+                          }
+                        },
+                        {
+                          "id": "link_back_login",
+                          "type": "Link",
+                          "props": {
+                            "text": "Quay lại đăng nhập",
+                            "navigateTo": "/dang-nhap"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R006",
+    "requirement": {
+      "title": "Hồ sơ cá nhân – hệ thống CRM",
+      "actor": "Nhân viên kinh doanh",
+      "description": "Nhân viên kinh doanh mở hộp thoại hồ sơ cá nhân từ thanh đầu trang CRM để cập nhật ảnh đại diện, họ tên, số điện thoại, chức danh và chữ ký email dùng khi gửi thư cho khách hàng. Email đăng nhập và nhóm kinh doanh chỉ hiển thị, không sửa được. Bấm Lưu để cập nhật hoặc Hủy để đóng hộp thoại mà không thay đổi.",
+      "permissions": [
+        "Người dùng chỉ cập nhật hồ sơ của chính mình",
+        "Không được sửa email đăng nhập và nhóm kinh doanh (do quản trị viên gán)"
+      ],
+      "rules": [
+        "Họ tên bắt buộc, tối đa 100 ký tự",
+        "Số điện thoại đúng định dạng Việt Nam (10 số)",
+        "Chữ ký email tối đa 500 ký tự",
+        "Ảnh đại diện JPG/PNG, tối đa 2 MB"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Khách hàng của tôi"
+      },
+      "children": [
+        {
+          "id": "app_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "app_title",
+              "type": "Heading",
+              "props": {
+                "text": "CRM – Quản lý khách hàng",
+                "level": 2
+              }
+            },
+            {
+              "id": "header_avatar",
+              "type": "Avatar",
+              "props": {
+                "name": "Trần Minh Anh"
+              }
+            }
+          ]
+        },
+        {
+          "id": "customers_section",
+          "type": "Section",
+          "props": {
+            "title": "Khách hàng của tôi"
+          },
+          "children": [
+            {
+              "id": "customers_table",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Khách hàng",
+                  "Người liên hệ",
+                  "Số điện thoại",
+                  "Giai đoạn",
+                  "Lần liên hệ gần nhất"
+                ],
+                "rows": [
+                  [
+                    "Công ty TNHH Phú Thịnh",
+                    "Lê Văn Hòa",
+                    "0903 456 789",
+                    "Đàm phán",
+                    "12/10/2026"
+                  ],
+                  [
+                    "Nhà hàng Sen Vàng",
+                    "Phạm Thu Hà",
+                    "0912 334 556",
+                    "Tiềm năng",
+                    "10/10/2026"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "profile_modal",
+          "type": "Modal",
+          "props": {
+            "title": "Hồ sơ cá nhân",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "avatar_row",
+              "type": "Row",
+              "props": {
+                "gap": 16,
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "profile_avatar",
+                  "type": "Avatar",
+                  "props": {
+                    "name": "Trần Minh Anh"
+                  }
+                },
+                {
+                  "id": "btn_change_avatar",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đổi ảnh đại diện",
+                    "variant": "secondary",
+                    "action": "upload_avatar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "profile_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "update_my_profile"
+              },
+              "children": [
+                {
+                  "id": "input_full_name",
+                  "type": "Input",
+                  "props": {
+                    "label": "Họ và tên",
+                    "name": "full_name",
+                    "inputType": "text",
+                    "required": true,
+                    "maxLength": 100
+                  }
+                },
+                {
+                  "id": "login_email",
+                  "type": "Text",
+                  "props": {
+                    "text": "Email đăng nhập: minhanh.tran@phuthinhcrm.vn"
+                  }
+                },
+                {
+                  "id": "sales_team",
+                  "type": "Text",
+                  "props": {
+                    "text": "Nhóm kinh doanh: Khách hàng doanh nghiệp – Miền Nam"
+                  }
+                },
+                {
+                  "id": "input_phone",
+                  "type": "Input",
+                  "props": {
+                    "label": "Số điện thoại",
+                    "name": "phone",
+                    "inputType": "tel",
+                    "placeholder": "09xx xxx xxx",
+                    "minLength": 10,
+                    "maxLength": 10
+                  }
+                },
+                {
+                  "id": "input_job_title",
+                  "type": "Input",
+                  "props": {
+                    "label": "Chức danh",
+                    "name": "job_title",
+                    "inputType": "text",
+                    "placeholder": "VD: Chuyên viên kinh doanh",
+                    "maxLength": 100
+                  }
+                },
+                {
+                  "id": "input_email_signature",
+                  "type": "Textarea",
+                  "props": {
+                    "label": "Chữ ký email",
+                    "name": "email_signature",
+                    "placeholder": "Chữ ký hiển thị cuối thư gửi khách hàng",
+                    "maxLength": 500
+                  }
+                },
+                {
+                  "id": "profile_actions",
+                  "type": "Row",
+                  "props": {
+                    "gap": 8,
+                    "align": "end"
+                  },
+                  "children": [
+                    {
+                      "id": "btn_cancel",
+                      "type": "Button",
+                      "props": {
+                        "label": "Hủy",
+                        "variant": "ghost",
+                        "action": "close_modal"
+                      }
+                    },
+                    {
+                      "id": "btn_save_profile",
+                      "type": "Button",
+                      "props": {
+                        "label": "Lưu thay đổi",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R011",
+    "requirement": {
+      "title": "Đăng nhập – kênh người bán sàn thương mại điện tử",
+      "actor": "Chủ shop / nhân viên bán hàng",
+      "description": "Người bán đăng nhập vào kênh người bán để quản lý sản phẩm và xử lý đơn hàng. Người dùng nhập email hoặc số điện thoại cùng mật khẩu, có thể chọn ghi nhớ đăng nhập trên thiết bị này. Từ màn này có thể đi đến Quên mật khẩu hoặc Đăng ký mở shop.",
+      "permissions": [
+        "Chỉ đăng nhập vào tài khoản người bán của chính mình"
+      ],
+      "rules": [
+        "Email/số điện thoại và mật khẩu bắt buộc",
+        "Sai thông tin hiển thị thông báo chung, không nói rõ sai trường nào",
+        "Khóa đăng nhập 15 phút sau 5 lần sai liên tiếp",
+        "Ghi nhớ đăng nhập tối đa 30 ngày"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đăng nhập Kênh Người Bán"
+      },
+      "children": [
+        {
+          "id": "login_heading",
+          "type": "Heading",
+          "props": {
+            "text": "Đăng nhập Kênh Người Bán",
+            "level": 1
+          }
+        },
+        {
+          "id": "login_subtitle",
+          "type": "Text",
+          "props": {
+            "text": "Quản lý sản phẩm, đơn hàng và doanh thu shop của bạn."
+          }
+        },
+        {
+          "id": "login_form",
+          "type": "Form",
+          "props": {
+            "submitAction": "seller_login"
+          },
+          "children": [
+            {
+              "id": "input_account",
+              "type": "Input",
+              "props": {
+                "label": "Email hoặc số điện thoại",
+                "name": "account",
+                "inputType": "text",
+                "placeholder": "VD: shop@gmail.com hoặc 0901234567",
+                "required": true,
+                "maxLength": 254
+              }
+            },
+            {
+              "id": "input_password",
+              "type": "Input",
+              "props": {
+                "label": "Mật khẩu",
+                "name": "password",
+                "inputType": "password",
+                "required": true
+              }
+            },
+            {
+              "id": "login_options",
+              "type": "Row",
+              "props": {
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "chk_remember",
+                  "type": "Checkbox",
+                  "props": {
+                    "label": "Ghi nhớ đăng nhập",
+                    "name": "remember_me"
+                  }
+                },
+                {
+                  "id": "link_forgot",
+                  "type": "Link",
+                  "props": {
+                    "text": "Quên mật khẩu?",
+                    "navigateTo": "/quen-mat-khau"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "btn_login",
+              "type": "Button",
+              "props": {
+                "label": "Đăng nhập",
+                "variant": "primary",
+                "action": "submit"
+              }
+            }
+          ]
+        },
+        {
+          "id": "register_row",
+          "type": "Row",
+          "props": {
+            "gap": 4
+          },
+          "children": [
+            {
+              "id": "register_prompt",
+              "type": "Text",
+              "props": {
+                "text": "Chưa có shop?"
+              }
+            },
+            {
+              "id": "link_register",
+              "type": "Link",
+              "props": {
+                "text": "Đăng ký bán hàng",
+                "navigateTo": "/dang-ky-nguoi-ban"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R016",
+    "requirement": {
+      "title": "Xác thực OTP – hệ thống quản lý kho",
+      "actor": "Nhân viên kho",
+      "description": "Sau khi nhập đúng tài khoản và mật khẩu trên hệ thống quản lý kho, nhân viên kho phải nhập mã OTP 6 chữ số được gửi qua SMS tới số điện thoại đã đăng ký. Màn hiển thị số điện thoại đã che, thời gian hiệu lực của mã, cho phép gửi lại mã và quay về đăng nhập bằng tài khoản khác.",
+      "permissions": [
+        "Chỉ xác thực phiên đăng nhập của chính mình"
+      ],
+      "rules": [
+        "Mã OTP bắt buộc, đúng 6 chữ số",
+        "Mã hết hạn sau 5 phút",
+        "Chỉ được gửi lại mã sau 60 giây, tối đa 3 lần mỗi phiên",
+        "Nhập sai 5 lần thì hủy phiên, phải đăng nhập lại"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Xác thực OTP"
+      },
+      "children": [
+        {
+          "id": "otp_card",
+          "type": "Card",
+          "props": {
+            "title": "Kho hàng – Xác thực OTP"
+          },
+          "children": [
+            {
+              "id": "otp_heading",
+              "type": "Heading",
+              "props": {
+                "text": "Xác thực đăng nhập",
+                "level": 2
+              }
+            },
+            {
+              "id": "otp_sent_to",
+              "type": "Text",
+              "props": {
+                "text": "Mã xác thực 6 chữ số đã được gửi tới số điện thoại ****** 789."
+              }
+            },
+            {
+              "id": "otp_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "verify_otp"
+              },
+              "children": [
+                {
+                  "id": "input_otp",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mã OTP",
+                    "name": "otp_code",
+                    "inputType": "text",
+                    "placeholder": "Nhập 6 chữ số",
+                    "required": true,
+                    "minLength": 6,
+                    "maxLength": 6
+                  }
+                },
+                {
+                  "id": "otp_expiry",
+                  "type": "Text",
+                  "props": {
+                    "text": "Mã hết hạn sau 04:59",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "btn_verify",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xác nhận",
+                    "variant": "primary",
+                    "action": "submit"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "resend_row",
+              "type": "Row",
+              "props": {
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "resend_prompt",
+                  "type": "Text",
+                  "props": {
+                    "text": "Chưa nhận được mã?"
+                  }
+                },
+                {
+                  "id": "btn_resend",
+                  "type": "Button",
+                  "props": {
+                    "label": "Gửi lại mã (60 giây)",
+                    "variant": "ghost",
+                    "action": "resend_otp"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "otp_divider",
+              "type": "Divider",
+              "props": {}
+            },
+            {
+              "id": "link_other_account",
+              "type": "Link",
+              "props": {
+                "text": "Đăng nhập bằng tài khoản khác",
+                "navigateTo": "/dang-nhap"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R021",
+    "requirement": {
+      "title": "Đăng ký tài khoản dùng thử – phần mềm CRM",
+      "actor": "Chủ doanh nghiệp / quản lý kinh doanh",
+      "description": "Người dùng mới đăng ký tài khoản dùng thử 14 ngày phần mềm CRM cho doanh nghiệp của mình. Sidebar bên trái hiển thị các bước đăng ký và lối sang trang đăng nhập; phần nội dung là biểu mẫu gồm thông tin người đăng ký và thông tin doanh nghiệp. Sau khi tạo tài khoản, hệ thống gửi email kích hoạt tới email công việc.",
+      "permissions": [
+        "Người dùng tự tạo tài khoản của chính mình và trở thành quản trị viên của không gian làm việc mới"
+      ],
+      "rules": [
+        "Họ tên, email công việc, số điện thoại, mật khẩu, tên công ty bắt buộc",
+        "Email chưa từng được đăng ký",
+        "Mật khẩu tối thiểu 8 ký tự, có chữ hoa, chữ thường và số",
+        "Xác nhận mật khẩu phải trùng khớp",
+        "Phải đồng ý Điều khoản sử dụng và Chính sách bảo mật"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đăng ký tài khoản"
+      },
+      "children": [
+        {
+          "id": "steps_sidebar",
+          "type": "Sidebar",
+          "props": {},
+          "children": [
+            {
+              "id": "brand_heading",
+              "type": "Heading",
+              "props": {
+                "text": "CRM Dùng thử 14 ngày",
+                "level": 3
+              }
+            },
+            {
+              "id": "steps_list",
+              "type": "List",
+              "props": {},
+              "children": [
+                {
+                  "id": "step_account",
+                  "type": "Badge",
+                  "props": {
+                    "text": "1. Tạo tài khoản",
+                    "tone": "info"
+                  }
+                },
+                {
+                  "id": "step_verify",
+                  "type": "Text",
+                  "props": {
+                    "text": "2. Xác nhận email"
+                  }
+                },
+                {
+                  "id": "step_setup",
+                  "type": "Text",
+                  "props": {
+                    "text": "3. Thiết lập quy trình bán hàng"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sidebar_divider",
+              "type": "Divider",
+              "props": {}
+            },
+            {
+              "id": "login_prompt",
+              "type": "Text",
+              "props": {
+                "text": "Đã có tài khoản?"
+              }
+            },
+            {
+              "id": "link_login",
+              "type": "Link",
+              "props": {
+                "text": "Đăng nhập",
+                "navigateTo": "/dang-nhap"
+              }
+            }
+          ]
+        },
+        {
+          "id": "content_col",
+          "type": "Column",
+          "props": {},
+          "children": [
+            {
+              "id": "register_heading",
+              "type": "Heading",
+              "props": {
+                "text": "Tạo tài khoản CRM",
+                "level": 1
+              }
+            },
+            {
+              "id": "register_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "register_trial_account"
+              },
+              "children": [
+                {
+                  "id": "section_personal",
+                  "type": "Section",
+                  "props": {
+                    "title": "Thông tin người đăng ký"
+                  },
+                  "children": [
+                    {
+                      "id": "input_full_name",
+                      "type": "Input",
+                      "props": {
+                        "label": "Họ và tên",
+                        "name": "full_name",
+                        "inputType": "text",
+                        "required": true,
+                        "maxLength": 100
+                      }
+                    },
+                    {
+                      "id": "input_work_email",
+                      "type": "Input",
+                      "props": {
+                        "label": "Email công việc",
+                        "name": "work_email",
+                        "inputType": "email",
+                        "placeholder": "ten@congty.vn",
+                        "required": true
+                      }
+                    },
+                    {
+                      "id": "input_phone",
+                      "type": "Input",
+                      "props": {
+                        "label": "Số điện thoại",
+                        "name": "phone",
+                        "inputType": "tel",
+                        "required": true,
+                        "minLength": 10,
+                        "maxLength": 10
+                      }
+                    },
+                    {
+                      "id": "input_password",
+                      "type": "Input",
+                      "props": {
+                        "label": "Mật khẩu",
+                        "name": "password",
+                        "inputType": "password",
+                        "required": true,
+                        "minLength": 8
+                      }
+                    },
+                    {
+                      "id": "input_confirm_password",
+                      "type": "Input",
+                      "props": {
+                        "label": "Xác nhận mật khẩu",
+                        "name": "confirm_password",
+                        "inputType": "password",
+                        "required": true,
+                        "minLength": 8
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "section_company",
+                  "type": "Section",
+                  "props": {
+                    "title": "Thông tin doanh nghiệp"
+                  },
+                  "children": [
+                    {
+                      "id": "input_company",
+                      "type": "Input",
+                      "props": {
+                        "label": "Tên công ty",
+                        "name": "company_name",
+                        "inputType": "text",
+                        "required": true,
+                        "maxLength": 200
+                      }
+                    },
+                    {
+                      "id": "select_company_size",
+                      "type": "Select",
+                      "props": {
+                        "label": "Quy mô nhân sự",
+                        "name": "company_size",
+                        "options": [
+                          "1–10",
+                          "11–50",
+                          "51–200",
+                          "Trên 200"
+                        ]
+                      }
+                    },
+                    {
+                      "id": "select_industry",
+                      "type": "Select",
+                      "props": {
+                        "label": "Lĩnh vực kinh doanh",
+                        "name": "industry",
+                        "options": [
+                          "Bán lẻ",
+                          "Bất động sản",
+                          "Giáo dục",
+                          "Dịch vụ tài chính",
+                          "Sản xuất",
+                          "Khác"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "chk_terms",
+                  "type": "Checkbox",
+                  "props": {
+                    "label": "Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật",
+                    "name": "accept_terms"
+                  }
+                },
+                {
+                  "id": "btn_register",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tạo tài khoản",
+                    "variant": "primary",
+                    "action": "submit"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Bố cục 'Sidebar điều hướng + nội dung' được hiểu là sidebar hiển thị tiến trình các bước đăng ký và lối sang đăng nhập (người dùng chưa đăng nhập nên không có menu ứng dụng). Quyền 'tài khoản của chính mình' hiểu là người dùng tự tạo tài khoản của mình."
+  },
+  {
+    "id": "R026",
+    "requirement": {
+      "title": "Đặt lại mật khẩu – cổng nghỉ phép & chấm công",
+      "actor": "Nhân viên",
+      "description": "Nhân viên mở liên kết đặt lại mật khẩu nhận qua email để tạo mật khẩu mới cho tài khoản cổng nghỉ phép & chấm công. Cột trái nêu yêu cầu về mật khẩu, cột phải hiển thị mã nhân viên của tài khoản và biểu mẫu nhập mật khẩu mới hai lần. Đặt lại thành công thì chuyển về trang đăng nhập.",
+      "permissions": [
+        "Chỉ đặt lại mật khẩu cho tài khoản gắn với liên kết hợp lệ của chính mình"
+      ],
+      "rules": [
+        "Liên kết hết hạn sau 30 phút hoặc sau khi đã dùng",
+        "Mật khẩu mới tối thiểu 8 ký tự, gồm chữ và số, không trùng 3 mật khẩu gần nhất",
+        "Xác nhận mật khẩu phải trùng khớp",
+        "Sau khi đặt lại, mọi phiên đăng nhập cũ bị đăng xuất"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đặt lại mật khẩu"
+      },
+      "children": [
+        {
+          "id": "layout_row",
+          "type": "Row",
+          "props": {
+            "gap": 32
+          },
+          "children": [
+            {
+              "id": "policy_card",
+              "type": "Card",
+              "props": {
+                "title": "Yêu cầu mật khẩu"
+              },
+              "children": [
+                {
+                  "id": "policy_list",
+                  "type": "List",
+                  "props": {},
+                  "children": [
+                    {
+                      "id": "rule_length",
+                      "type": "Text",
+                      "props": {
+                        "text": "Tối thiểu 8 ký tự"
+                      }
+                    },
+                    {
+                      "id": "rule_mix",
+                      "type": "Text",
+                      "props": {
+                        "text": "Có cả chữ cái và chữ số"
+                      }
+                    },
+                    {
+                      "id": "rule_history",
+                      "type": "Text",
+                      "props": {
+                        "text": "Không trùng 3 mật khẩu gần nhất"
+                      }
+                    },
+                    {
+                      "id": "rule_logout",
+                      "type": "Text",
+                      "props": {
+                        "text": "Các thiết bị chấm công và trình duyệt đang đăng nhập sẽ bị đăng xuất"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "reset_section",
+              "type": "Section",
+              "props": {
+                "title": "Đặt lại mật khẩu"
+              },
+              "children": [
+                {
+                  "id": "account_info",
+                  "type": "Text",
+                  "props": {
+                    "text": "Tài khoản: NV01234 – Nguyễn Thị Lan"
+                  }
+                },
+                {
+                  "id": "reset_form",
+                  "type": "Form",
+                  "props": {
+                    "submitAction": "reset_password"
+                  },
+                  "children": [
+                    {
+                      "id": "input_new_password",
+                      "type": "Input",
+                      "props": {
+                        "label": "Mật khẩu mới",
+                        "name": "new_password",
+                        "inputType": "password",
+                        "required": true,
+                        "minLength": 8
+                      }
+                    },
+                    {
+                      "id": "input_confirm_password",
+                      "type": "Input",
+                      "props": {
+                        "label": "Nhập lại mật khẩu mới",
+                        "name": "confirm_password",
+                        "inputType": "password",
+                        "required": true,
+                        "minLength": 8
+                      }
+                    },
+                    {
+                      "id": "btn_reset",
+                      "type": "Button",
+                      "props": {
+                        "label": "Đặt lại mật khẩu",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "link_login",
+                  "type": "Link",
+                  "props": {
+                    "text": "Quay về đăng nhập",
+                    "navigateTo": "/dang-nhap"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R031",
+    "requirement": {
+      "title": "Đổi mật khẩu – hệ thống quản lý kho",
+      "actor": "Nhân viên kho",
+      "description": "Từ trang Tài khoản của tôi trên hệ thống quản lý kho, nhân viên bấm Đổi mật khẩu để mở hộp thoại. Người dùng nhập mật khẩu hiện tại, mật khẩu mới và xác nhận, có thể chọn đăng xuất khỏi các máy quét cầm tay và thiết bị khác. Bấm Cập nhật để lưu, Hủy để đóng hộp thoại.",
+      "permissions": [
+        "Chỉ đổi mật khẩu của chính mình"
+      ],
+      "rules": [
+        "Cả ba trường bắt buộc",
+        "Mật khẩu hiện tại phải đúng",
+        "Mật khẩu mới tối thiểu 8 ký tự và khác mật khẩu hiện tại",
+        "Xác nhận mật khẩu phải trùng khớp"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Tài khoản của tôi"
+      },
+      "children": [
+        {
+          "id": "wms_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "wms_title",
+              "type": "Heading",
+              "props": {
+                "text": "WMS – Kho Bình Dương",
+                "level": 2
+              }
+            },
+            {
+              "id": "user_avatar",
+              "type": "Avatar",
+              "props": {
+                "name": "Lê Quốc Bảo"
+              }
+            }
+          ]
+        },
+        {
+          "id": "account_section",
+          "type": "Section",
+          "props": {
+            "title": "Tài khoản của tôi"
+          },
+          "children": [
+            {
+              "id": "account_name",
+              "type": "Text",
+              "props": {
+                "text": "Họ tên: Lê Quốc Bảo"
+              }
+            },
+            {
+              "id": "account_role",
+              "type": "Text",
+              "props": {
+                "text": "Vai trò: Nhân viên nhập kho – Ca sáng"
+              }
+            },
+            {
+              "id": "password_changed",
+              "type": "Text",
+              "props": {
+                "text": "Đổi mật khẩu lần cuối: 02/08/2026"
+              }
+            },
+            {
+              "id": "btn_open_change",
+              "type": "Button",
+              "props": {
+                "label": "Đổi mật khẩu",
+                "variant": "secondary",
+                "action": "open_change_password"
+              }
+            }
+          ]
+        },
+        {
+          "id": "change_password_modal",
+          "type": "Modal",
+          "props": {
+            "title": "Đổi mật khẩu",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "change_password_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "change_password"
+              },
+              "children": [
+                {
+                  "id": "input_current_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mật khẩu hiện tại",
+                    "name": "current_password",
+                    "inputType": "password",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "input_new_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mật khẩu mới",
+                    "name": "new_password",
+                    "inputType": "password",
+                    "required": true,
+                    "minLength": 8
+                  }
+                },
+                {
+                  "id": "input_confirm_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Xác nhận mật khẩu mới",
+                    "name": "confirm_password",
+                    "inputType": "password",
+                    "required": true,
+                    "minLength": 8
+                  }
+                },
+                {
+                  "id": "chk_logout_devices",
+                  "type": "Checkbox",
+                  "props": {
+                    "label": "Đăng xuất khỏi máy quét cầm tay và các thiết bị khác",
+                    "name": "logout_other_devices"
+                  }
+                },
+                {
+                  "id": "modal_actions",
+                  "type": "Row",
+                  "props": {
+                    "gap": 8,
+                    "align": "end"
+                  },
+                  "children": [
+                    {
+                      "id": "btn_cancel",
+                      "type": "Button",
+                      "props": {
+                        "label": "Hủy",
+                        "variant": "ghost",
+                        "action": "close_modal"
+                      }
+                    },
+                    {
+                      "id": "btn_update",
+                      "type": "Button",
+                      "props": {
+                        "label": "Cập nhật",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R036",
+    "requirement": {
+      "title": "Cài đặt tài khoản – nền tảng học trực tuyến",
+      "actor": "Học viên",
+      "description": "Học viên chỉnh các cài đặt tài khoản trên nền tảng học trực tuyến: ngôn ngữ giao diện, múi giờ dùng để hiển thị lịch học, các loại thông báo qua email và chế độ hiển thị hồ sơ với người học khác. Tất cả nằm trong một thẻ ở giữa trang; bấm Lưu cài đặt để áp dụng hoặc Hủy để bỏ thay đổi.",
+      "permissions": [
+        "Chỉ thay đổi cài đặt của tài khoản chính mình"
+      ],
+      "rules": [
+        "Ngôn ngữ và múi giờ bắt buộc",
+        "Múi giờ mặc định là (GMT+7) Hà Nội",
+        "Thông báo bắt buộc về thay đổi lịch thi không thể tắt nên không hiển thị trong danh sách tùy chọn",
+        "Thay đổi chỉ có hiệu lực sau khi bấm Lưu"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Cài đặt tài khoản"
+      },
+      "children": [
+        {
+          "id": "settings_card",
+          "type": "Card",
+          "props": {
+            "title": "Cài đặt tài khoản"
+          },
+          "children": [
+            {
+              "id": "settings_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "save_account_settings"
+              },
+              "children": [
+                {
+                  "id": "section_display",
+                  "type": "Section",
+                  "props": {
+                    "title": "Hiển thị"
+                  },
+                  "children": [
+                    {
+                      "id": "display_row",
+                      "type": "Row",
+                      "props": {
+                        "gap": 16
+                      },
+                      "children": [
+                        {
+                          "id": "select_language",
+                          "type": "Select",
+                          "props": {
+                            "label": "Ngôn ngữ giao diện",
+                            "name": "language",
+                            "options": [
+                              "Tiếng Việt",
+                              "English"
+                            ],
+                            "required": true
+                          }
+                        },
+                        {
+                          "id": "select_timezone",
+                          "type": "Select",
+                          "props": {
+                            "label": "Múi giờ",
+                            "name": "timezone",
+                            "options": [
+                              "(GMT+7) Hà Nội",
+                              "(GMT+8) Singapore",
+                              "(GMT+9) Tokyo"
+                            ],
+                            "required": true
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "section_notifications",
+                  "type": "Section",
+                  "props": {
+                    "title": "Thông báo qua email"
+                  },
+                  "children": [
+                    {
+                      "id": "chk_class_reminder",
+                      "type": "Checkbox",
+                      "props": {
+                        "label": "Nhắc lịch buổi học trực tuyến trước 30 phút",
+                        "name": "notify_class_reminder"
+                      }
+                    },
+                    {
+                      "id": "chk_assignment_due",
+                      "type": "Checkbox",
+                      "props": {
+                        "label": "Nhắc hạn nộp bài tập trước 24 giờ",
+                        "name": "notify_assignment_due"
+                      }
+                    },
+                    {
+                      "id": "chk_new_course",
+                      "type": "Checkbox",
+                      "props": {
+                        "label": "Thông báo khóa học mới phù hợp",
+                        "name": "notify_new_course"
+                      }
+                    },
+                    {
+                      "id": "chk_certificate",
+                      "type": "Checkbox",
+                      "props": {
+                        "label": "Thông báo khi được cấp chứng chỉ",
+                        "name": "notify_certificate"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "section_privacy",
+                  "type": "Section",
+                  "props": {
+                    "title": "Quyền riêng tư"
+                  },
+                  "children": [
+                    {
+                      "id": "radio_profile_visibility",
+                      "type": "Radio",
+                      "props": {
+                        "label": "Ai có thể xem hồ sơ và tiến độ học của bạn",
+                        "name": "profile_visibility",
+                        "options": [
+                          "Mọi học viên cùng khóa",
+                          "Chỉ giảng viên",
+                          "Chỉ mình tôi"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "actions_divider",
+                  "type": "Divider",
+                  "props": {}
+                },
+                {
+                  "id": "settings_actions",
+                  "type": "Row",
+                  "props": {
+                    "gap": 8,
+                    "align": "end"
+                  },
+                  "children": [
+                    {
+                      "id": "btn_cancel",
+                      "type": "Button",
+                      "props": {
+                        "label": "Hủy",
+                        "variant": "secondary",
+                        "action": "reset_form"
+                      }
+                    },
+                    {
+                      "id": "btn_save",
+                      "type": "Button",
+                      "props": {
+                        "label": "Lưu cài đặt",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R041",
+    "requirement": {
+      "title": "Đăng nhập – hệ thống CRM doanh nghiệp",
+      "actor": "Nhân viên kinh doanh / chăm sóc khách hàng",
+      "description": "Nhân viên đăng nhập vào hệ thống CRM của công ty để làm việc với khách hàng và cơ hội bán hàng. Cột trái là biểu mẫu đăng nhập bằng email công việc và mật khẩu; cột phải cho phép đăng nhập một lần (SSO) bằng Google Workspace hoặc Microsoft 365 của công ty. Có liên kết Quên mật khẩu; tài khoản do quản trị viên cấp nên không có đăng ký.",
+      "permissions": [
+        "Chỉ đăng nhập vào tài khoản của chính mình"
+      ],
+      "rules": [
+        "Email công việc và mật khẩu bắt buộc, email đúng định dạng",
+        "Sai thông tin hiển thị thông báo chung",
+        "Khóa tài khoản 30 phút sau 5 lần đăng nhập sai",
+        "SSO chỉ chấp nhận tài khoản thuộc tên miền công ty"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đăng nhập CRM"
+      },
+      "children": [
+        {
+          "id": "page_heading",
+          "type": "Heading",
+          "props": {
+            "text": "Đăng nhập CRM",
+            "level": 1
+          }
+        },
+        {
+          "id": "login_row",
+          "type": "Row",
+          "props": {
+            "gap": 40
+          },
+          "children": [
+            {
+              "id": "col_password_login",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "login_form",
+                  "type": "Form",
+                  "props": {
+                    "title": "Đăng nhập bằng tài khoản",
+                    "submitAction": "crm_login"
+                  },
+                  "children": [
+                    {
+                      "id": "input_email",
+                      "type": "Input",
+                      "props": {
+                        "label": "Email công việc",
+                        "name": "email",
+                        "inputType": "email",
+                        "placeholder": "ten@congty.vn",
+                        "required": true
+                      }
+                    },
+                    {
+                      "id": "input_password",
+                      "type": "Input",
+                      "props": {
+                        "label": "Mật khẩu",
+                        "name": "password",
+                        "inputType": "password",
+                        "required": true
+                      }
+                    },
+                    {
+                      "id": "link_forgot",
+                      "type": "Link",
+                      "props": {
+                        "text": "Quên mật khẩu?",
+                        "navigateTo": "/quen-mat-khau"
+                      }
+                    },
+                    {
+                      "id": "btn_login",
+                      "type": "Button",
+                      "props": {
+                        "label": "Đăng nhập",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "col_sso",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "sso_heading",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Đăng nhập một lần (SSO)",
+                    "level": 3
+                  }
+                },
+                {
+                  "id": "sso_hint",
+                  "type": "Text",
+                  "props": {
+                    "text": "Dùng tài khoản email công ty để đăng nhập không cần mật khẩu riêng."
+                  }
+                },
+                {
+                  "id": "btn_sso_google",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tiếp tục với Google Workspace",
+                    "variant": "secondary",
+                    "action": "sso_google"
+                  }
+                },
+                {
+                  "id": "btn_sso_microsoft",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tiếp tục với Microsoft 365",
+                    "variant": "secondary",
+                    "action": "sso_microsoft"
+                  }
+                },
+                {
+                  "id": "no_account_hint",
+                  "type": "Text",
+                  "props": {
+                    "text": "Chưa có tài khoản? Liên hệ quản trị viên CRM của công ty.",
+                    "tone": "muted"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R046",
+    "requirement": {
+      "title": "Đổi mật khẩu – cổng quản trị hệ thống",
+      "actor": "Quản trị viên hệ thống",
+      "description": "Quản trị viên đổi mật khẩu tài khoản quản trị của chính mình theo chính sách bảo mật: mật khẩu hết hạn sau 90 ngày và hệ thống cảnh báo khi sắp hết hạn. Trang hiển thị ngày đổi gần nhất, chính sách mật khẩu và biểu mẫu nhập mật khẩu hiện tại, mật khẩu mới, xác nhận. Đổi thành công thì các phiên khác bị đăng xuất và ghi nhật ký kiểm toán.",
+      "permissions": [
+        "Chỉ đổi mật khẩu của chính mình; không đổi mật khẩu cho người dùng khác tại màn này"
+      ],
+      "rules": [
+        "Cả ba trường bắt buộc",
+        "Mật khẩu mới tối thiểu 12 ký tự, có chữ hoa, chữ thường, số và ký tự đặc biệt",
+        "Không trùng 5 mật khẩu gần nhất",
+        "Xác nhận mật khẩu phải trùng khớp",
+        "Đổi thành công: đăng xuất các phiên khác, ghi nhật ký kiểm toán"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đổi mật khẩu"
+      },
+      "children": [
+        {
+          "id": "admin_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "admin_title",
+              "type": "Heading",
+              "props": {
+                "text": "Quản trị hệ thống",
+                "level": 2
+              }
+            },
+            {
+              "id": "admin_avatar",
+              "type": "Avatar",
+              "props": {
+                "name": "Đỗ Hoàng Nam"
+              }
+            }
+          ]
+        },
+        {
+          "id": "change_section",
+          "type": "Section",
+          "props": {
+            "title": "Đổi mật khẩu"
+          },
+          "children": [
+            {
+              "id": "alert_expiry",
+              "type": "Alert",
+              "props": {
+                "text": "Mật khẩu của bạn sẽ hết hạn sau 7 ngày (chính sách 90 ngày). Hãy đổi mật khẩu để tránh bị khóa truy cập.",
+                "tone": "warning"
+              }
+            },
+            {
+              "id": "last_changed",
+              "type": "Text",
+              "props": {
+                "text": "Lần đổi gần nhất: 20/07/2026",
+                "tone": "muted"
+              }
+            },
+            {
+              "id": "change_form",
+              "type": "Form",
+              "props": {
+                "submitAction": "change_admin_password"
+              },
+              "children": [
+                {
+                  "id": "input_current_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mật khẩu hiện tại",
+                    "name": "current_password",
+                    "inputType": "password",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "input_new_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Mật khẩu mới",
+                    "name": "new_password",
+                    "inputType": "password",
+                    "required": true,
+                    "minLength": 12
+                  }
+                },
+                {
+                  "id": "password_policy",
+                  "type": "Text",
+                  "props": {
+                    "text": "Tối thiểu 12 ký tự, gồm chữ hoa, chữ thường, chữ số, ký tự đặc biệt; không trùng 5 mật khẩu gần nhất.",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "input_confirm_password",
+                  "type": "Input",
+                  "props": {
+                    "label": "Xác nhận mật khẩu mới",
+                    "name": "confirm_password",
+                    "inputType": "password",
+                    "required": true,
+                    "minLength": 12
+                  }
+                },
+                {
+                  "id": "form_actions",
+                  "type": "Row",
+                  "props": {
+                    "gap": 8
+                  },
+                  "children": [
+                    {
+                      "id": "btn_cancel",
+                      "type": "Button",
+                      "props": {
+                        "label": "Hủy",
+                        "variant": "secondary",
+                        "action": "navigate_back"
+                      }
+                    },
+                    {
+                      "id": "btn_change",
+                      "type": "Button",
+                      "props": {
+                        "label": "Đổi mật khẩu",
+                        "variant": "primary",
+                        "action": "submit"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

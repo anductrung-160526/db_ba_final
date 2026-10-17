@@ -1574,3 +1574,16 @@ select:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Gợi ý thành phần tiếp theo ---------- */
+.ov-suggest { border: 2px dashed #f59e0b; background: rgba(245, 158, 11, 0.08); }
+.sugg { border: 1px solid var(--line, #e5e7eb); border-radius: 8px; padding: 10px; margin: 8px 0; display: flex; flex-direction: column; gap: 6px; background: var(--card, #fff); }
+.sugg:hover { border-color: #f59e0b; }
+.sugg-head { display: flex; gap: 8px; align-items: flex-start; }
+.sugg-title { font-weight: 600; line-height: 1.3; }
+.sugg-conf { height: 4px; background: #eef0f3; border-radius: 2px; overflow: hidden; }
+.sugg-conf span { display: block; height: 100%; background: #f59e0b; }
+.sugg-actions { display: flex; gap: 6px; align-items: center; }
+.sugg-actions .right { margin-left: auto; }
+.sugg-foot { margin-top: 10px; border-top: 1px dashed var(--line, #e5e7eb); padding-top: 8px; }
+

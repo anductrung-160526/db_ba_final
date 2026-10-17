@@ -107,6 +107,26 @@ route("PATCH", "/api/annotations/:id", ({ params, body }) => {
 });
 route("DELETE", "/api/annotations/:id", ({ params }) => (repo.deleteAnnotation(params.id), { ok: true }));
 
+// Gợi ý thành phần tiếp theo
+route("GET", "/api/screens/:id/suggestions", ({ params, query }) => svc.screenSuggestions(params.id, (query.get("nodeIds") ?? "").split(",").filter(Boolean)));
+route("POST", "/api/suggestions/events", ({ body }) => {
+  const action = body.action;
+  if (!["shown", "applied", "dismissed"].includes(action)) throw new BizError("action không hợp lệ");
+  const screenId = str(body.screenId, 100);
+  if (!repo.getScreen(screenId)) throw new BizError("Không tìm thấy màn hình", 404);
+  repo.logSuggestionEvent({
+    screenId,
+    versionId: str(body.versionId, 100) || null,
+    kind: str(body.kind, 20) || "add",
+    targetNodeId: str(body.targetNodeId, 200) || null,
+    title: str(body.title, 300),
+    confidence: Math.max(0, Math.min(1, Number(body.confidence) || 0)),
+    action,
+  });
+  return { ok: true };
+});
+route("GET", "/api/modules/:id/suggestion-stats", ({ params }) => repo.suggestionStats(params.id));
+
 // Docs
 route("POST", "/api/modules/:id/docs/generate", ({ params }) => svc.generateDocs(params.id));
 route("POST", "/api/modules/:id/docs/refine", ({ params, body }) => svc.refineDoc(params.id, str(body.target, 100), str(body.instruction)));

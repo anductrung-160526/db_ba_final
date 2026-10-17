@@ -4,6 +4,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { get, post, patch, del, download } from "../api.ts";
 import type { Annotation, ModuleDetail, ScreenVersion } from "../../shared/types.ts";
+import type { Suggestion } from "../../shared/nextComponent.ts";
 import { findNode, nodeLabel, topMostIds, UINode } from "../../shared/design.ts";
 import { Renderer } from "../components/Renderer.tsx";
 import { Badge, Btn, Empty, Field, Modal, StatusBadge, fmtTime, useUI } from "../components/ui.tsx";
@@ -37,7 +38,13 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
   const [comment, setComment] = useState("");
   const [prompt, setPrompt] = useState("");
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [panel, setPanel] = useState<"edit" | "versions" | "layers">("edit");
+  const [panel, setPanel] = useState<"edit" | "versions" | "layers" | "suggest">("edit");
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggMeta, setSuggMeta] = useState<{ versionId: string; kind: string; trees: number; learned: number } | null>(null);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [suggHover, setSuggHover] = useState<string | null>(null);
+  const shownRef = useRef<Set<string>>(new Set());
+  const fromSuggestion = useRef(false);
   const [newScreen, setNewScreen] = useState<{ name: string; prompt: string } | null>(null);
   const [drag, setDrag] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
   const [rects, setRects] = useState<Record<string, Rect>>({});
@@ -78,14 +85,14 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
   }, []);
 
   const measure = useCallback(() => {
-    const ids = new Set<string>([...selected, ...changedIds, ...(hover ? [hover] : []), ...openAnns.flatMap((a) => a.nodeIds.slice(0, 1))]);
+    const ids = new Set<string>([...selected, ...changedIds, ...(hover ? [hover] : []), ...(suggHover ? [suggHover] : []), ...openAnns.flatMap((a) => a.nodeIds.slice(0, 1))]);
     const next: Record<string, Rect> = {};
     for (const id of ids) {
       const r = rectOf(id);
       if (r) next[id] = r;
     }
     setRects(next);
-  }, [selected, changedIds, hover, openAnns.map((a) => a.id + a.nodeIds[0]).join(), rectOf]);
+  }, [selected, changedIds, hover, suggHover, openAnns.map((a) => a.id + a.nodeIds[0]).join(), rectOf]);
 
   useLayoutEffect(() => {
     measure();
@@ -99,6 +106,50 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
       window.removeEventListener("resize", measure);
     };
   }, [measure]);
+
+  // ------------------------------------------------ gợi ý thành phần tiếp theo (debounce 300 ms)
+  const selKey = selected.join(",");
+  useEffect(() => {
+    if (!screen?.currentVersionId) return setSuggestions([]);
+    const t = setTimeout(() => {
+      get<{ suggestions: Suggestion[]; versionId: string; model: { kind: string; trees: number; learned: number } }>(`/api/screens/${screen.id}/suggestions?nodeIds=${encodeURIComponent(selKey)}`)
+        .then((r) => {
+          setSuggestions(r.suggestions);
+          setSuggMeta({ versionId: r.versionId, ...r.model });
+        })
+        .catch(() => setSuggestions([]));
+    }, 300);
+    return () => clearTimeout(t);
+  }, [screen?.id, screen?.currentVersionId, screen?.status, selKey, m.annotations.length]);
+
+  const visibleSuggestions = suggestions.filter((s) => !dismissed.has(s.id));
+  const logSugg = (s: Suggestion, action: "shown" | "applied" | "dismissed") =>
+    screen && post("/api/suggestions/events", { screenId: screen.id, versionId: suggMeta?.versionId, kind: s.kind, targetNodeId: s.targetNodeId, title: s.title, confidence: s.confidence, action }).catch(() => {});
+
+  // ghi "shown" một lần cho mỗi gợi ý của mỗi phiên bản khi tab Gợi ý đang mở
+  useEffect(() => {
+    if (panel !== "suggest") return;
+    for (const s of visibleSuggestions) {
+      const key = `${suggMeta?.versionId}:${s.id}`;
+      if (shownRef.current.has(key)) continue;
+      shownRef.current.add(key);
+      logSugg(s, "shown");
+    }
+  }, [panel, visibleSuggestions.map((s) => s.id).join()]);
+
+  const applySuggestion = (s: Suggestion) => {
+    logSugg(s, "applied");
+    setSelected([s.targetNodeId]);
+    setPrompt(s.fixPrompt);
+    fromSuggestion.current = true;
+    setPanel("edit");
+    setSuggHover(null);
+    toast("Đã khoanh vùng và điền sẵn prompt – kiểm tra rồi bấm “Sửa vùng đã khoanh”", "info");
+  };
+  const dismissSuggestion = (s: Suggestion) => {
+    setDismissed((d) => new Set([...d, s.id]));
+    logSugg(s, "dismissed");
+  };
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -211,6 +262,12 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
     setPrompt("");
     setChecked(new Set());
     setShowChanges(true);
+    // sửa xong theo gợi ý → bỏ vùng chọn và mở lại tab Gợi ý để thấy phần tử tiếp theo cần sửa
+    if (fromSuggestion.current && r.version) {
+      fromSuggestion.current = false;
+      setSelected([]);
+      setPanel("suggest");
+    }
     await reload();
     await loadVersions();
   };
@@ -365,6 +422,7 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
                     </div>
                   )}
                   {selected.map((id) => rects[id] && <div key={`s-${id}`} className="ov ov-selected" style={box(rects[id])} />)}
+                  {suggHover && rects[suggHover] && <div className="ov ov-suggest" style={box(rects[suggHover])} />}
                   {mode !== "prototype" &&
                     openAnns.map((a, i) => {
                       const r = rects[a.nodeIds[0]] ?? a.bbox;
@@ -412,7 +470,41 @@ export function DesignTab({ m, reload }: { m: ModuleDetail; reload: () => Promis
             <button className={panel === "versions" ? "on" : ""} onClick={() => setPanel("versions")} data-testid="versions-tab">
               Phiên bản ({versions.length})
             </button>
+            <button className={panel === "suggest" ? "on" : ""} onClick={() => setPanel("suggest")} data-testid="suggest-tab">
+              Gợi ý {visibleSuggestions.length ? `(${visibleSuggestions.length})` : ""}
+            </button>
           </div>
+
+          {panel === "suggest" && (
+            <div className="panel-body" data-testid="suggest-panel">
+              <div className="muted small">
+                {selected.length ? `Gợi ý cho vùng đang chọn (${selected.length} phần tử)` : "Gợi ý cho toàn màn hình – khoanh vùng để thu hẹp"}
+              </div>
+              {visibleSuggestions.map((s) => (
+                <div key={s.id} className={`sugg sugg-${s.kind}`} onMouseEnter={() => setSuggHover(s.targetNodeId)} onMouseLeave={() => setSuggHover(null)} data-testid="suggestion">
+                  <div className="sugg-head">
+                    <Badge tone={s.kind === "add" ? "blue" : s.kind === "fix" ? "amber" : "violet"}>{s.kind === "add" ? "Thêm" : s.kind === "fix" ? "Sửa" : "Xem lại"}</Badge>
+                    <span className="sugg-title">{s.title}</span>
+                  </div>
+                  <div className="muted small">{s.reason}</div>
+                  <div className="sugg-conf" title={`Độ tin cậy ${Math.round(s.confidence * 100)}%`}>
+                    <span style={{ width: `${Math.round(s.confidence * 100)}%` }} />
+                  </div>
+                  <div className="sugg-actions">
+                    <Btn size="sm" kind="primary" disabled={!!previewing} onClick={() => applySuggestion(s)} data-testid="apply-suggestion">
+                      Áp dụng
+                    </Btn>
+                    <Btn size="sm" kind="ghost" onClick={() => dismissSuggestion(s)}>
+                      Bỏ qua
+                    </Btn>
+                    <span className="muted small right">{Math.round(s.confidence * 100)}%</span>
+                  </div>
+                </div>
+              ))}
+              {!visibleSuggestions.length && <div className="muted small pad">Chưa có gợi ý cho vùng này.</div>}
+              {suggMeta && <div className="muted small sugg-foot">{suggMeta.kind === "transformer" ? "Transformer" : "N-gram"} · học từ {suggMeta.trees.toLocaleString("vi-VN")} màn hình{suggMeta.learned ? ` + ${suggMeta.learned} màn đã duyệt` : ""}</div>}
+            </div>
+          )}
 
           {panel === "edit" && (
             <div className="panel-body">

@@ -56,6 +56,15 @@ CREATE TABLE IF NOT EXISTS prompt_runs (
   input_tokens INTEGER NOT NULL DEFAULT 0, output_tokens INTEGER NOT NULL DEFAULT 0, latency_ms INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS suggestion_events (
+  id TEXT PRIMARY KEY, screen_id TEXT NOT NULL, version_id TEXT, suggestion_kind TEXT NOT NULL,
+  target_node_id TEXT, title TEXT NOT NULL, confidence REAL NOT NULL,
+  action TEXT NOT NULL CHECK(action IN ('shown','applied','dismissed')), created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS model_learned_trees (
+  version_id TEXT PRIMARY KEY, screen_id TEXT NOT NULL, tree TEXT NOT NULL, created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sugg_screen ON suggestion_events(screen_id);
 CREATE INDEX IF NOT EXISTS idx_modules_project ON modules(project_id);
 CREATE INDEX IF NOT EXISTS idx_screens_module ON screens(module_id);
 CREATE INDEX IF NOT EXISTS idx_versions_screen ON screen_versions(screen_id);

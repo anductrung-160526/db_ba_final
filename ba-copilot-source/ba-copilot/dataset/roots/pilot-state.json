@@ -1,0 +1,1626 @@
+[
+  {
+    "id": "R005",
+    "requirement": {
+      "title": "Hàng chờ duyệt phiếu xuất kho – không có phiếu chờ",
+      "actor": "Trưởng kho",
+      "description": "Trưởng kho mở hàng chờ duyệt phiếu xuất kho, lọc theo kho Bình Dương và loại phiếu 'Xuất chuyển kho'; không còn phiếu nào ở trạng thái Chờ duyệt nên bảng trống. Màn hiển thị thông điệp 'Không có phiếu xuất kho nào chờ bạn duyệt' kèm thời điểm cập nhật gần nhất. Người dùng có thể xóa bộ lọc để xem toàn bộ hàng chờ, làm mới danh sách, hoặc mở lịch sử phiếu đã duyệt/từ chối.",
+      "permissions": [
+        "Chỉ được duyệt hoặc từ chối phiếu xuất kho",
+        "Không được tạo, sửa hay xóa phiếu"
+      ],
+      "rules": [
+        "Chỉ liệt kê phiếu ở trạng thái Chờ duyệt thuộc kho được phân công",
+        "Khi bảng trống phải hiển thị thông điệp và cách bỏ lọc",
+        "Không hiển thị nút tạo phiếu"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Duyệt phiếu xuất kho"
+      },
+      "children": [
+        {
+          "id": "queue_card",
+          "type": "Card",
+          "props": {
+            "title": "Hàng chờ duyệt"
+          },
+          "children": [
+            {
+              "id": "queue_heading",
+              "type": "Heading",
+              "props": {
+                "text": "Phiếu xuất kho chờ duyệt",
+                "level": 1
+              }
+            },
+            {
+              "id": "filter_row",
+              "type": "Row",
+              "props": {
+                "gap": 12,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "filter_warehouse",
+                  "type": "Select",
+                  "props": {
+                    "label": "Kho",
+                    "name": "warehouse",
+                    "options": [
+                      "Tất cả kho",
+                      "Kho Bình Dương",
+                      "Kho Long An",
+                      "Kho Hà Nội"
+                    ]
+                  }
+                },
+                {
+                  "id": "filter_slip_type",
+                  "type": "Select",
+                  "props": {
+                    "label": "Loại phiếu",
+                    "name": "slip_type",
+                    "options": [
+                      "Tất cả",
+                      "Xuất bán",
+                      "Xuất chuyển kho",
+                      "Xuất trả nhà cung cấp"
+                    ]
+                  }
+                },
+                {
+                  "id": "btn_clear_filter",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xóa bộ lọc",
+                    "variant": "ghost",
+                    "action": "clear_filters"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "slip_table",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Số phiếu",
+                  "Kho xuất",
+                  "Loại phiếu",
+                  "Người lập",
+                  "Số mặt hàng",
+                  "Ngày lập"
+                ],
+                "rows": [],
+                "rowActions": [
+                  "Duyệt",
+                  "Từ chối"
+                ]
+              }
+            },
+            {
+              "id": "empty_state",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "empty_title",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Không có phiếu xuất kho nào chờ bạn duyệt",
+                    "level": 3
+                  }
+                },
+                {
+                  "id": "empty_desc",
+                  "type": "Text",
+                  "props": {
+                    "text": "Không có phiếu Chờ duyệt cho Kho Bình Dương – Xuất chuyển kho. Thử bỏ bộ lọc để xem hàng chờ của các kho khác.",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "last_sync",
+                  "type": "Text",
+                  "props": {
+                    "text": "Cập nhật lúc 09:42, 17/10/2026",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "empty_actions",
+                  "type": "Row",
+                  "props": {
+                    "gap": 12
+                  },
+                  "children": [
+                    {
+                      "id": "btn_refresh",
+                      "type": "Button",
+                      "props": {
+                        "label": "Làm mới danh sách",
+                        "variant": "primary",
+                        "action": "refresh_queue"
+                      }
+                    },
+                    {
+                      "id": "link_history",
+                      "type": "Link",
+                      "props": {
+                        "text": "Xem lịch sử phiếu đã xử lý",
+                        "navigateTo": "/kho/phieu-xuat/lich-su"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R010",
+    "requirement": {
+      "title": "Chặn truy cập bài nộp của học viên khác",
+      "actor": "Học viên",
+      "description": "Học viên mở một đường dẫn tới bài nộp 'Bài tập 3 – Phân tích yêu cầu' của học viên khác trong khóa 'Phân tích nghiệp vụ cơ bản'. Hệ thống không hiển thị nội dung bài nộp mà mở hộp thoại 'Không có quyền truy cập' trên nền trang Bài nộp của tôi, nêu rõ học viên chỉ xem được bài nộp của chính mình. Người dùng có thể quay lại danh sách bài nộp của mình hoặc đóng hộp thoại.",
+      "permissions": [
+        "Chỉ xem và nộp bài của chính mình",
+        "Không xem được bài nộp, điểm của học viên khác"
+      ],
+      "rules": [
+        "Không tiết lộ tên, điểm hay nội dung bài nộp của người khác trong thông báo",
+        "Ghi nhật ký lần truy cập bị từ chối"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Bài nộp của tôi"
+      },
+      "children": [
+        {
+          "id": "course_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "course_title",
+              "type": "Heading",
+              "props": {
+                "text": "Phân tích nghiệp vụ cơ bản – Lớp K12",
+                "level": 1
+              }
+            },
+            {
+              "id": "course_status",
+              "type": "Badge",
+              "props": {
+                "text": "Đang học",
+                "tone": "info"
+              }
+            }
+          ]
+        },
+        {
+          "id": "my_submissions",
+          "type": "Section",
+          "props": {
+            "title": "Bài nộp của tôi"
+          },
+          "children": [
+            {
+              "id": "submission_table",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Bài tập",
+                  "Hạn nộp",
+                  "Ngày nộp",
+                  "Trạng thái",
+                  "Điểm"
+                ],
+                "rows": [
+                  [
+                    "Bài tập 1 – Phỏng vấn stakeholder",
+                    "05/10/2026",
+                    "04/10/2026",
+                    "Đã chấm",
+                    "8,5"
+                  ],
+                  [
+                    "Bài tập 2 – Use case",
+                    "12/10/2026",
+                    "12/10/2026",
+                    "Đang chấm",
+                    "—"
+                  ]
+                ],
+                "rowActions": [
+                  "Xem bài nộp"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "access_denied_modal",
+          "type": "Modal",
+          "props": {
+            "title": "Không có quyền truy cập",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "denied_alert",
+              "type": "Alert",
+              "props": {
+                "text": "Bạn không có quyền xem bài nộp này.",
+                "tone": "danger"
+              }
+            },
+            {
+              "id": "denied_reason",
+              "type": "Text",
+              "props": {
+                "text": "Bài nộp bạn mở thuộc về một học viên khác. Mỗi học viên chỉ được xem bài nộp và điểm của chính mình."
+              }
+            },
+            {
+              "id": "denied_hint",
+              "type": "Text",
+              "props": {
+                "text": "Nếu bạn cho rằng đây là bài của mình, hãy kiểm tra lại tài khoản đang đăng nhập.",
+                "tone": "muted"
+              }
+            },
+            {
+              "id": "modal_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_my_submissions",
+                  "type": "Button",
+                  "props": {
+                    "label": "Về bài nộp của tôi",
+                    "variant": "primary",
+                    "action": "go_my_submissions"
+                  }
+                },
+                {
+                  "id": "btn_close",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đóng",
+                    "variant": "secondary",
+                    "action": "close_modal"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R015",
+    "requirement": {
+      "title": "Lỗi khi duyệt hóa đơn nhà cung cấp vượt giá trị đơn mua",
+      "actor": "Kế toán trưởng",
+      "description": "Kế toán trưởng bấm Duyệt hóa đơn HĐ-2026-0815 của Công ty TNHH Bao bì Minh Phát; hệ thống từ chối vì tổng tiền hóa đơn 52.800.000 ₫ vượt giá trị đơn mua PO-1123 (48.000.000 ₫) quá ngưỡng 5%. Thông báo lỗi hiển thị ngay dưới thanh tiêu đề kèm mức chênh lệch, hóa đơn vẫn ở trạng thái Chờ duyệt. Người dùng có thể đối chiếu chi tiết dòng hàng và từ chối hóa đơn với lý do để bộ phận mua hàng xử lý.",
+      "permissions": [
+        "Chỉ được duyệt hoặc từ chối hóa đơn",
+        "Không được sửa số liệu hóa đơn"
+      ],
+      "rules": [
+        "Không cho duyệt khi tổng hóa đơn vượt giá trị PO quá 5%",
+        "Từ chối bắt buộc nhập lý do, tối đa 500 ký tự",
+        "Hóa đơn giữ trạng thái Chờ duyệt khi duyệt thất bại"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Duyệt hóa đơn nhà cung cấp"
+      },
+      "children": [
+        {
+          "id": "invoice_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "header_info",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "invoice_title",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Hóa đơn HĐ-2026-0815",
+                    "level": 1
+                  }
+                },
+                {
+                  "id": "invoice_status",
+                  "type": "Badge",
+                  "props": {
+                    "text": "Chờ duyệt",
+                    "tone": "warning"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "header_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8
+              },
+              "children": [
+                {
+                  "id": "btn_approve",
+                  "type": "Button",
+                  "props": {
+                    "label": "Duyệt",
+                    "variant": "primary",
+                    "action": "approve_invoice"
+                  }
+                },
+                {
+                  "id": "btn_reject",
+                  "type": "Button",
+                  "props": {
+                    "label": "Từ chối",
+                    "variant": "danger",
+                    "action": "reject_invoice"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "approve_error",
+          "type": "Alert",
+          "props": {
+            "text": "Không thể duyệt hóa đơn: tổng tiền 52.800.000 ₫ vượt giá trị đơn mua PO-1123 (48.000.000 ₫) 10%, quá ngưỡng cho phép 5%. Hãy đối chiếu dòng hàng hoặc từ chối để bộ phận mua hàng điều chỉnh.",
+            "tone": "danger"
+          }
+        },
+        {
+          "id": "summary_row",
+          "type": "Row",
+          "props": {
+            "gap": 16
+          },
+          "children": [
+            {
+              "id": "stat_invoice_total",
+              "type": "Stat",
+              "props": {
+                "label": "Tổng hóa đơn",
+                "value": "52.800.000 ₫"
+              }
+            },
+            {
+              "id": "stat_po_total",
+              "type": "Stat",
+              "props": {
+                "label": "Giá trị PO-1123",
+                "value": "48.000.000 ₫"
+              }
+            },
+            {
+              "id": "stat_diff",
+              "type": "Stat",
+              "props": {
+                "label": "Chênh lệch",
+                "value": "+4.800.000 ₫"
+              }
+            }
+          ]
+        },
+        {
+          "id": "line_items",
+          "type": "Section",
+          "props": {
+            "title": "Đối chiếu dòng hàng"
+          },
+          "children": [
+            {
+              "id": "line_table",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Mã hàng",
+                  "Tên hàng",
+                  "SL hóa đơn",
+                  "SL theo PO",
+                  "Đơn giá",
+                  "Thành tiền"
+                ],
+                "rows": [
+                  [
+                    "BB-120",
+                    "Thùng carton 5 lớp 60x40x40",
+                    "1.200",
+                    "1.000",
+                    "32.000 ₫",
+                    "38.400.000 ₫"
+                  ],
+                  [
+                    "BB-045",
+                    "Băng keo trong 100 yard",
+                    "1.800",
+                    "1.800",
+                    "8.000 ₫",
+                    "14.400.000 ₫"
+                  ]
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "reject_form",
+          "type": "Form",
+          "props": {
+            "title": "Từ chối hóa đơn",
+            "submitAction": "submit_reject"
+          },
+          "children": [
+            {
+              "id": "reject_reason",
+              "type": "Textarea",
+              "props": {
+                "label": "Lý do từ chối",
+                "name": "reject_reason",
+                "placeholder": "VD: Số lượng thùng carton vượt PO 200 cái, đề nghị NCC xuất lại hóa đơn",
+                "required": true,
+                "maxLength": 500
+              }
+            },
+            {
+              "id": "btn_submit_reject",
+              "type": "Button",
+              "props": {
+                "label": "Gửi từ chối",
+                "variant": "danger",
+                "action": "submit_reject"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R020",
+    "requirement": {
+      "title": "Xác nhận xóa khóa học",
+      "actor": "Quản trị viên đào tạo",
+      "description": "Quản trị viên chọn Xóa khóa học 'Kỹ năng thuyết trình chuyên nghiệp' từ danh mục khóa học; hệ thống hiển thị thẻ xác nhận ở giữa trang thay vì xóa ngay. Thẻ nêu hậu quả: 3 lớp đang mở, 42 học viên đang ghi danh và toàn bộ tiến độ, bài nộp sẽ bị xóa vĩnh viễn, không thể hoàn tác. Người dùng phải tích xác nhận đã hiểu rồi bấm Xóa khóa học, hoặc Hủy để quay về danh mục.",
+      "permissions": [
+        "Toàn quyền xem, thêm, sửa, xóa khóa học"
+      ],
+      "rules": [
+        "Nút Xóa khóa học chỉ bật khi đã tích ô xác nhận",
+        "Xóa khóa học kéo theo xóa lớp, ghi danh, bài nộp",
+        "Thao tác không hoàn tác"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Danh mục khóa học"
+      },
+      "children": [
+        {
+          "id": "confirm_card",
+          "type": "Card",
+          "props": {
+            "title": "Xác nhận xóa"
+          },
+          "children": [
+            {
+              "id": "confirm_title",
+              "type": "Heading",
+              "props": {
+                "text": "Xóa khóa học “Kỹ năng thuyết trình chuyên nghiệp”?",
+                "level": 2
+              }
+            },
+            {
+              "id": "confirm_warning",
+              "type": "Alert",
+              "props": {
+                "text": "Thao tác này không thể hoàn tác.",
+                "tone": "danger"
+              }
+            },
+            {
+              "id": "consequence_text",
+              "type": "Text",
+              "props": {
+                "text": "Khi xóa, toàn bộ lớp học, danh sách ghi danh, tiến độ học tập và bài nộp của khóa này sẽ bị xóa vĩnh viễn. Học viên sẽ nhận thông báo lớp bị hủy."
+              }
+            },
+            {
+              "id": "impact_stats",
+              "type": "Row",
+              "props": {
+                "gap": 16
+              },
+              "children": [
+                {
+                  "id": "stat_classes",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Lớp đang mở",
+                    "value": "3"
+                  }
+                },
+                {
+                  "id": "stat_learners",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Học viên ghi danh",
+                    "value": "42"
+                  }
+                },
+                {
+                  "id": "stat_submissions",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Bài nộp",
+                    "value": "118"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "confirm_understand",
+              "type": "Checkbox",
+              "props": {
+                "label": "Tôi hiểu dữ liệu của khóa học sẽ bị xóa vĩnh viễn",
+                "name": "confirm_understand"
+              }
+            },
+            {
+              "id": "confirm_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_cancel",
+                  "type": "Button",
+                  "props": {
+                    "label": "Hủy",
+                    "variant": "secondary",
+                    "action": "cancel_delete"
+                  }
+                },
+                {
+                  "id": "btn_delete_course",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xóa khóa học",
+                    "variant": "danger",
+                    "action": "delete_course"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R025",
+    "requirement": {
+      "title": "Gửi yêu cầu gia hạn hợp đồng thuê thành công",
+      "actor": "Khách thuê",
+      "description": "Khách thuê gửi yêu cầu gia hạn hợp đồng HĐT-2025-0312 (căn hộ B2-1205, Vinhomes Grand Park) thêm 12 tháng. Sau khi gửi, hộp thoại thành công hiện trên trang Hợp đồng của tôi, cho biết mã yêu cầu YC-GH-00871, trạng thái Chờ chủ nhà phản hồi và thời hạn phản hồi dự kiến 3 ngày làm việc. Người dùng có thể mở chi tiết yêu cầu vừa gửi hoặc đóng hộp thoại để quay lại hợp đồng.",
+      "permissions": [
+        "Chỉ xem và gửi yêu cầu cho hợp đồng của chính mình"
+      ],
+      "rules": [
+        "Mỗi hợp đồng chỉ có một yêu cầu gia hạn đang chờ",
+        "Thông báo xác nhận gửi qua email đã đăng ký"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Hợp đồng của tôi"
+      },
+      "children": [
+        {
+          "id": "page_heading",
+          "type": "Heading",
+          "props": {
+            "text": "Hợp đồng thuê của tôi",
+            "level": 1
+          }
+        },
+        {
+          "id": "lease_card",
+          "type": "Card",
+          "props": {
+            "title": "HĐT-2025-0312"
+          },
+          "children": [
+            {
+              "id": "lease_meta",
+              "type": "Row",
+              "props": {
+                "gap": 8,
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "lease_unit",
+                  "type": "Text",
+                  "props": {
+                    "text": "Căn hộ B2-1205 – Vinhomes Grand Park, TP. Thủ Đức"
+                  }
+                },
+                {
+                  "id": "lease_status",
+                  "type": "Badge",
+                  "props": {
+                    "text": "Đang hiệu lực",
+                    "tone": "success"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "lease_stats",
+              "type": "Row",
+              "props": {
+                "gap": 24
+              },
+              "children": [
+                {
+                  "id": "stat_rent",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Giá thuê/tháng",
+                    "value": "14.500.000 ₫"
+                  }
+                },
+                {
+                  "id": "stat_end",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Ngày hết hạn",
+                    "value": "31/12/2026"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "success_modal",
+          "type": "Modal",
+          "props": {
+            "title": "Gửi yêu cầu thành công",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "success_alert",
+              "type": "Alert",
+              "props": {
+                "text": "Đã gửi yêu cầu gia hạn hợp đồng HĐT-2025-0312 thêm 12 tháng.",
+                "tone": "success"
+              }
+            },
+            {
+              "id": "request_details",
+              "type": "List",
+              "props": {},
+              "children": [
+                {
+                  "id": "detail_code",
+                  "type": "Text",
+                  "props": {
+                    "text": "Mã yêu cầu: YC-GH-00871"
+                  }
+                },
+                {
+                  "id": "detail_status",
+                  "type": "Text",
+                  "props": {
+                    "text": "Trạng thái: Chờ chủ nhà phản hồi"
+                  }
+                },
+                {
+                  "id": "detail_eta",
+                  "type": "Text",
+                  "props": {
+                    "text": "Dự kiến phản hồi trong 3 ngày làm việc; email xác nhận đã gửi tới địa chỉ của bạn."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "modal_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_view_request",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xem yêu cầu",
+                    "variant": "primary",
+                    "action": "view_request"
+                  }
+                },
+                {
+                  "id": "btn_close",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đóng",
+                    "variant": "secondary",
+                    "action": "close_modal"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R030",
+    "requirement": {
+      "title": "Xuất nhật ký đăng nhập thành công – tài khoản chỉ xem",
+      "actor": "Kiểm toán viên nội bộ",
+      "description": "Kiểm toán viên (quyền chỉ xem) lọc nhật ký đăng nhập từ 01/10 đến 15/10/2026 và bấm Xuất CSV. Hệ thống hiển thị thông báo thành công phía trên bảng: đã xuất 1.248 bản ghi vào tệp nhat_ky_dang_nhap_20261001_20261015.csv, tệp có hiệu lực tải trong 24 giờ. Người dùng có thể tải tệp xuống hoặc tiếp tục xem nhật ký; không có thao tác chỉnh sửa người dùng hay cấu hình.",
+      "permissions": [
+        "Chỉ xem nhật ký và xuất dữ liệu đang xem",
+        "Không thêm, sửa, xóa người dùng hoặc cấu hình"
+      ],
+      "rules": [
+        "Tệp xuất chỉ chứa bản ghi theo bộ lọc hiện tại",
+        "Liên kết tải hết hạn sau 24 giờ",
+        "Thao tác xuất được ghi vào nhật ký hệ thống"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Quản trị hệ thống"
+      },
+      "children": [
+        {
+          "id": "admin_nav",
+          "type": "Sidebar",
+          "props": {},
+          "children": [
+            {
+              "id": "nav_users",
+              "type": "Link",
+              "props": {
+                "text": "Người dùng",
+                "navigateTo": "/quan-tri/nguoi-dung"
+              }
+            },
+            {
+              "id": "nav_roles",
+              "type": "Link",
+              "props": {
+                "text": "Vai trò & quyền",
+                "navigateTo": "/quan-tri/vai-tro"
+              }
+            },
+            {
+              "id": "nav_login_log",
+              "type": "Link",
+              "props": {
+                "text": "Nhật ký đăng nhập",
+                "navigateTo": "/quan-tri/nhat-ky-dang-nhap"
+              }
+            },
+            {
+              "id": "nav_audit",
+              "type": "Link",
+              "props": {
+                "text": "Nhật ký thay đổi",
+                "navigateTo": "/quan-tri/nhat-ky-thay-doi"
+              }
+            }
+          ]
+        },
+        {
+          "id": "main_content",
+          "type": "Column",
+          "props": {},
+          "children": [
+            {
+              "id": "log_heading",
+              "type": "Heading",
+              "props": {
+                "text": "Nhật ký đăng nhập",
+                "level": 1
+              }
+            },
+            {
+              "id": "export_success",
+              "type": "Alert",
+              "props": {
+                "text": "Đã xuất 1.248 bản ghi (01/10–15/10/2026) vào tệp nhat_ky_dang_nhap_20261001_20261015.csv. Liên kết tải có hiệu lực trong 24 giờ.",
+                "tone": "success"
+              }
+            },
+            {
+              "id": "success_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8
+              },
+              "children": [
+                {
+                  "id": "btn_download",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tải tệp CSV",
+                    "variant": "primary",
+                    "action": "download_export"
+                  }
+                },
+                {
+                  "id": "btn_dismiss",
+                  "type": "Button",
+                  "props": {
+                    "label": "Ẩn thông báo",
+                    "variant": "ghost",
+                    "action": "dismiss_alert"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "log_filters",
+              "type": "Row",
+              "props": {
+                "gap": 12,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "filter_from",
+                  "type": "DatePicker",
+                  "props": {
+                    "label": "Từ ngày",
+                    "name": "from_date"
+                  }
+                },
+                {
+                  "id": "filter_to",
+                  "type": "DatePicker",
+                  "props": {
+                    "label": "Đến ngày",
+                    "name": "to_date"
+                  }
+                },
+                {
+                  "id": "filter_result",
+                  "type": "Select",
+                  "props": {
+                    "label": "Kết quả",
+                    "name": "login_result",
+                    "options": [
+                      "Tất cả",
+                      "Thành công",
+                      "Thất bại",
+                      "Bị khóa"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "login_log_table",
+              "type": "Table",
+              "props": {
+                "columns": [
+                  "Thời gian",
+                  "Tài khoản",
+                  "Địa chỉ IP",
+                  "Thiết bị",
+                  "Kết quả"
+                ],
+                "rows": [
+                  [
+                    "15/10/2026 17:58",
+                    "nguyen.lan",
+                    "113.161.24.8",
+                    "Chrome / Windows",
+                    "Thành công"
+                  ],
+                  [
+                    "15/10/2026 17:41",
+                    "tran.hung",
+                    "27.72.101.15",
+                    "Safari / iOS",
+                    "Thất bại"
+                  ]
+                ]
+              }
+            },
+            {
+              "id": "log_pagination",
+              "type": "Pagination",
+              "props": {
+                "pages": 63
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Màn 'chỉ xem' nên thông báo thành công gắn với thao tác không thay đổi dữ liệu: xuất nhật ký ra CSV."
+  },
+  {
+    "id": "R035",
+    "requirement": {
+      "title": "Không có quyền sửa đơn hàng – người duyệt chiết khấu",
+      "actor": "Trưởng nhóm kinh doanh",
+      "description": "Trưởng nhóm kinh doanh mở đường dẫn 'Sửa đơn hàng DH-24-05517' được chia sẻ trong nhóm chat. Vì tài khoản chỉ có quyền duyệt/từ chối đơn có chiết khấu, hệ thống chặn trang sửa và hiển thị thông báo không có quyền ở cột trái cùng mã lỗi. Cột phải gợi ý các việc được phép: mở đơn này ở chế độ duyệt, vào hàng chờ duyệt, hoặc liên hệ quản trị viên để xin cấp quyền.",
+      "permissions": [
+        "Chỉ được duyệt hoặc từ chối đơn hàng có chiết khấu",
+        "Không được tạo, sửa, xóa đơn hàng"
+      ],
+      "rules": [
+        "Không hiển thị dữ liệu chỉnh sửa của đơn khi bị chặn",
+        "Ghi nhận lần truy cập bị từ chối kèm mã lỗi"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Không có quyền truy cập"
+      },
+      "children": [
+        {
+          "id": "two_columns",
+          "type": "Row",
+          "props": {
+            "gap": 32
+          },
+          "children": [
+            {
+              "id": "denied_column",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "error_code",
+                  "type": "Badge",
+                  "props": {
+                    "text": "Mã lỗi 403",
+                    "tone": "danger"
+                  }
+                },
+                {
+                  "id": "denied_title",
+                  "type": "Heading",
+                  "props": {
+                    "text": "Bạn không có quyền sửa đơn hàng",
+                    "level": 1
+                  }
+                },
+                {
+                  "id": "denied_desc",
+                  "type": "Text",
+                  "props": {
+                    "text": "Trang 'Sửa đơn hàng DH-24-05517' chỉ dành cho nhân viên bán hàng phụ trách đơn. Tài khoản của bạn có vai trò Người duyệt chiết khấu nên chỉ được duyệt hoặc từ chối đơn."
+                  }
+                },
+                {
+                  "id": "denied_account",
+                  "type": "Text",
+                  "props": {
+                    "text": "Đang đăng nhập: Lê Minh Tuấn – Người duyệt chiết khấu",
+                    "tone": "muted"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "next_steps_card",
+              "type": "Card",
+              "props": {
+                "title": "Bạn có thể làm gì"
+              },
+              "children": [
+                {
+                  "id": "next_desc",
+                  "type": "Text",
+                  "props": {
+                    "text": "Bạn có thể xử lý đơn này ở chế độ duyệt:"
+                  }
+                },
+                {
+                  "id": "btn_open_review",
+                  "type": "Button",
+                  "props": {
+                    "label": "Mở đơn DH-24-05517 để duyệt",
+                    "variant": "primary",
+                    "action": "open_order_review"
+                  }
+                },
+                {
+                  "id": "btn_queue",
+                  "type": "Button",
+                  "props": {
+                    "label": "Đến hàng chờ duyệt",
+                    "variant": "secondary",
+                    "action": "open_approval_queue"
+                  }
+                },
+                {
+                  "id": "next_divider",
+                  "type": "Divider",
+                  "props": {}
+                },
+                {
+                  "id": "contact_desc",
+                  "type": "Text",
+                  "props": {
+                    "text": "Cần sửa nội dung đơn? Hãy liên hệ nhân viên phụ trách hoặc quản trị viên để được cấp quyền.",
+                    "tone": "muted"
+                  }
+                },
+                {
+                  "id": "link_contact_admin",
+                  "type": "Link",
+                  "props": {
+                    "text": "Gửi yêu cầu cấp quyền",
+                    "navigateTo": "/ho-tro/yeu-cau-quyen"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R040",
+    "requirement": {
+      "title": "Xác nhận tạo hồ sơ nhân viên mới",
+      "actor": "Chuyên viên tuyển dụng",
+      "description": "Chuyên viên tuyển dụng nhập xong hồ sơ nhân viên mới Phạm Thu Hà và bấm Tạo hồ sơ trên thanh tiêu đề. Hệ thống mở hộp thoại xác nhận vì sau khi tạo người dùng không thể tự sửa hay xóa hồ sơ: mã nhân viên sẽ được cấp và email kích hoạt tài khoản sẽ gửi tới ha.pham@congty.vn. Người dùng bấm Xác nhận tạo để hoàn tất hoặc Quay lại kiểm tra để rà soát thông tin.",
+      "permissions": [
+        "Chỉ được tạo mới hồ sơ nhân viên",
+        "Không được sửa hay xóa hồ sơ sau khi tạo"
+      ],
+      "rules": [
+        "Mọi thay đổi sau khi tạo phải gửi yêu cầu cho bộ phận Nhân sự",
+        "Email công ty phải là duy nhất",
+        "Ngày vào làm không trước ngày hiện tại quá 30 ngày"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Nhân sự – Hồ sơ nhân viên"
+      },
+      "children": [
+        {
+          "id": "form_header",
+          "type": "Header",
+          "props": {},
+          "children": [
+            {
+              "id": "form_title",
+              "type": "Heading",
+              "props": {
+                "text": "Tạo hồ sơ nhân viên",
+                "level": 1
+              }
+            },
+            {
+              "id": "header_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8
+              },
+              "children": [
+                {
+                  "id": "btn_cancel_form",
+                  "type": "Button",
+                  "props": {
+                    "label": "Hủy",
+                    "variant": "secondary",
+                    "action": "cancel_create"
+                  }
+                },
+                {
+                  "id": "btn_create",
+                  "type": "Button",
+                  "props": {
+                    "label": "Tạo hồ sơ",
+                    "variant": "primary",
+                    "action": "open_confirm"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "employee_form",
+          "type": "Form",
+          "props": {
+            "title": "Thông tin nhân viên",
+            "submitAction": "open_confirm"
+          },
+          "children": [
+            {
+              "id": "name_row",
+              "type": "Row",
+              "props": {
+                "gap": 16
+              },
+              "children": [
+                {
+                  "id": "input_full_name",
+                  "type": "Input",
+                  "props": {
+                    "label": "Họ và tên",
+                    "name": "full_name",
+                    "inputType": "text",
+                    "required": true,
+                    "maxLength": 100
+                  }
+                },
+                {
+                  "id": "input_email",
+                  "type": "Input",
+                  "props": {
+                    "label": "Email công ty",
+                    "name": "work_email",
+                    "inputType": "email",
+                    "required": true
+                  }
+                }
+              ]
+            },
+            {
+              "id": "job_row",
+              "type": "Row",
+              "props": {
+                "gap": 16
+              },
+              "children": [
+                {
+                  "id": "select_department",
+                  "type": "Select",
+                  "props": {
+                    "label": "Phòng ban",
+                    "name": "department",
+                    "options": [
+                      "Kinh doanh",
+                      "Kế toán",
+                      "Kỹ thuật",
+                      "Nhân sự"
+                    ],
+                    "required": true
+                  }
+                },
+                {
+                  "id": "input_position",
+                  "type": "Input",
+                  "props": {
+                    "label": "Chức danh",
+                    "name": "position",
+                    "inputType": "text",
+                    "required": true
+                  }
+                },
+                {
+                  "id": "input_start_date",
+                  "type": "DatePicker",
+                  "props": {
+                    "label": "Ngày vào làm",
+                    "name": "start_date",
+                    "required": true
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "confirm_modal",
+          "type": "Modal",
+          "props": {
+            "title": "Xác nhận tạo hồ sơ",
+            "open": true
+          },
+          "children": [
+            {
+              "id": "confirm_summary",
+              "type": "Text",
+              "props": {
+                "text": "Tạo hồ sơ cho Phạm Thu Hà – Chuyên viên Kế toán, vào làm từ 01/11/2026?"
+              }
+            },
+            {
+              "id": "confirm_consequence",
+              "type": "Alert",
+              "props": {
+                "text": "Sau khi tạo, bạn không thể sửa hoặc xóa hồ sơ này. Mã nhân viên sẽ được cấp tự động và email kích hoạt tài khoản sẽ gửi tới ha.pham@congty.vn.",
+                "tone": "warning"
+              }
+            },
+            {
+              "id": "confirm_note",
+              "type": "Text",
+              "props": {
+                "text": "Nếu cần thay đổi sau này, hãy gửi yêu cầu điều chỉnh cho bộ phận Nhân sự.",
+                "tone": "muted"
+              }
+            },
+            {
+              "id": "confirm_actions",
+              "type": "Row",
+              "props": {
+                "gap": 8,
+                "align": "end"
+              },
+              "children": [
+                {
+                  "id": "btn_back_review",
+                  "type": "Button",
+                  "props": {
+                    "label": "Quay lại kiểm tra",
+                    "variant": "secondary",
+                    "action": "close_confirm"
+                  }
+                },
+                {
+                  "id": "btn_confirm_create",
+                  "type": "Button",
+                  "props": {
+                    "label": "Xác nhận tạo",
+                    "variant": "primary",
+                    "action": "submit_employee"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R045",
+    "requirement": {
+      "title": "Lỗi nộp bài tập do tệp vượt dung lượng",
+      "actor": "Học viên",
+      "description": "Học viên nộp bài 'Đồ án cuối khóa – Thiết kế quy trình' bằng tệp bao_cao_cuoi_ky.pdf dung lượng 34 MB; hệ thống từ chối vì vượt giới hạn 20 MB và bài chưa được ghi nhận. Thẻ ở giữa trang hiển thị thông báo lỗi, giới hạn tệp, định dạng chấp nhận và thời gian còn lại trước hạn nộp 23:59 ngày 20/10/2026. Người dùng có thể chọn tệp khác để nộp lại hoặc quay lại trang bài tập.",
+      "permissions": [
+        "Chỉ nộp và xem bài nộp của chính mình"
+      ],
+      "rules": [
+        "Tệp tối đa 20 MB, định dạng PDF hoặc DOCX",
+        "Không nhận bài sau hạn nộp",
+        "Bài nộp lỗi không được tính là đã nộp"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Nộp bài tập"
+      },
+      "children": [
+        {
+          "id": "error_card",
+          "type": "Card",
+          "props": {
+            "title": "Nộp bài tập"
+          },
+          "children": [
+            {
+              "id": "assignment_title",
+              "type": "Heading",
+              "props": {
+                "text": "Đồ án cuối khóa – Thiết kế quy trình",
+                "level": 2
+              }
+            },
+            {
+              "id": "upload_error",
+              "type": "Alert",
+              "props": {
+                "text": "Nộp bài không thành công: tệp bao_cao_cuoi_ky.pdf (34 MB) vượt dung lượng tối đa 20 MB. Bài của bạn chưa được ghi nhận.",
+                "tone": "danger"
+              }
+            },
+            {
+              "id": "requirement_list",
+              "type": "List",
+              "props": {},
+              "children": [
+                {
+                  "id": "req_size",
+                  "type": "Text",
+                  "props": {
+                    "text": "Dung lượng tối đa: 20 MB mỗi tệp"
+                  }
+                },
+                {
+                  "id": "req_format",
+                  "type": "Text",
+                  "props": {
+                    "text": "Định dạng chấp nhận: PDF, DOCX"
+                  }
+                },
+                {
+                  "id": "req_tip",
+                  "type": "Text",
+                  "props": {
+                    "text": "Gợi ý: nén ảnh trong báo cáo hoặc xuất PDF ở chất lượng tiêu chuẩn.",
+                    "tone": "muted"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "deadline_row",
+              "type": "Row",
+              "props": {
+                "gap": 24
+              },
+              "children": [
+                {
+                  "id": "stat_deadline",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Hạn nộp",
+                    "value": "23:59, 20/10/2026"
+                  }
+                },
+                {
+                  "id": "stat_remaining",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Thời gian còn lại",
+                    "value": "3 ngày 6 giờ"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "error_actions",
+              "type": "Row",
+              "props": {
+                "gap": 12,
+                "align": "center"
+              },
+              "children": [
+                {
+                  "id": "btn_choose_file",
+                  "type": "Button",
+                  "props": {
+                    "label": "Chọn tệp khác",
+                    "variant": "primary",
+                    "action": "choose_file"
+                  }
+                },
+                {
+                  "id": "link_back_assignment",
+                  "type": "Link",
+                  "props": {
+                    "text": "Quay lại bài tập",
+                    "navigateTo": "/khoa-hoc/bpm-01/bai-tap/do-an"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "R050",
+    "requirement": {
+      "title": "Đơn nghỉ phép của tôi – chưa có đơn",
+      "actor": "Nhân viên",
+      "description": "Nhân viên mở trang Đơn nghỉ phép của tôi cho năm 2026 và chưa từng tạo đơn nào nên danh sách trống. Cột trái hiển thị số ngày phép còn lại và đã dùng; cột phải hiển thị bộ lọc, thông điệp 'Bạn chưa có đơn nghỉ phép nào trong năm 2026' và nút Tạo đơn nghỉ phép. Người dùng có thể tạo đơn mới hoặc đổi năm để xem đơn các năm trước.",
+      "permissions": [
+        "Chỉ thao tác (xem, tạo đơn) trên đơn nghỉ phép của chính mình"
+      ],
+      "rules": [
+        "Chỉ liệt kê đơn do chính nhân viên tạo",
+        "Số ngày phép còn lại tính theo năm đang lọc"
+      ]
+    },
+    "tree": {
+      "id": "page",
+      "type": "Page",
+      "props": {
+        "title": "Đơn nghỉ phép của tôi"
+      },
+      "children": [
+        {
+          "id": "two_columns",
+          "type": "Row",
+          "props": {
+            "gap": 24
+          },
+          "children": [
+            {
+              "id": "balance_card",
+              "type": "Card",
+              "props": {
+                "title": "Quỹ phép 2026"
+              },
+              "children": [
+                {
+                  "id": "stat_remaining_days",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Phép năm còn lại",
+                    "value": "12 ngày"
+                  }
+                },
+                {
+                  "id": "stat_used_days",
+                  "type": "Stat",
+                  "props": {
+                    "label": "Đã sử dụng",
+                    "value": "0 ngày"
+                  }
+                },
+                {
+                  "id": "balance_note",
+                  "type": "Text",
+                  "props": {
+                    "text": "Phép năm 2025 chuyển sang còn hiệu lực đến 31/03/2026.",
+                    "tone": "muted"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "requests_column",
+              "type": "Column",
+              "props": {},
+              "children": [
+                {
+                  "id": "list_toolbar",
+                  "type": "Row",
+                  "props": {
+                    "gap": 12
+                  },
+                  "children": [
+                    {
+                      "id": "filter_year",
+                      "type": "Select",
+                      "props": {
+                        "label": "Năm",
+                        "name": "year",
+                        "options": [
+                          "2026",
+                          "2025",
+                          "2024"
+                        ]
+                      }
+                    },
+                    {
+                      "id": "filter_status",
+                      "type": "Select",
+                      "props": {
+                        "label": "Trạng thái",
+                        "name": "status",
+                        "options": [
+                          "Tất cả",
+                          "Chờ duyệt",
+                          "Đã duyệt",
+                          "Bị từ chối",
+                          "Đã hủy"
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "empty_section",
+                  "type": "Section",
+                  "props": {},
+                  "children": [
+                    {
+                      "id": "empty_title",
+                      "type": "Heading",
+                      "props": {
+                        "text": "Bạn chưa có đơn nghỉ phép nào trong năm 2026",
+                        "level": 3
+                      }
+                    },
+                    {
+                      "id": "empty_desc",
+                      "type": "Text",
+                      "props": {
+                        "text": "Các đơn bạn tạo sẽ hiển thị tại đây cùng trạng thái duyệt của quản lý trực tiếp.",
+                        "tone": "muted"
+                      }
+                    },
+                    {
+                      "id": "empty_actions",
+                      "type": "Row",
+                      "props": {
+                        "gap": 12,
+                        "align": "center"
+                      },
+                      "children": [
+                        {
+                          "id": "btn_create_leave",
+                          "type": "Button",
+                          "props": {
+                            "label": "Tạo đơn nghỉ phép",
+                            "variant": "primary",
+                            "action": "create_leave_request"
+                          }
+                        },
+                        {
+                          "id": "link_prev_year",
+                          "type": "Link",
+                          "props": {
+                            "text": "Xem đơn năm 2025",
+                            "navigateTo": "/nhan-su/nghi-phep?nam=2025"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
