@@ -53,6 +53,10 @@ export function ModuleView({ id, tab }: { id: string; tab: string }) {
           >
             Yêu cầu nghiệp vụ {m.requirementInput ? "✓" : "(trống)"}
           </Btn>
+          {/* Link nhanh tới Kho tài liệu của module này */}
+          <a href={`#/p/${m.projectId}/files/${m.id}`} className="btn btn-ghost btn-sm" data-testid="module-files-link">
+            📁 Kho tài liệu
+          </a>
         </div>
         <nav className="tabs" role="tablist">
           {TABS.map((t) => {

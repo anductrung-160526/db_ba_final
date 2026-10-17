@@ -3,6 +3,9 @@ import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { createServer, Server } from "node:http";
 import type { AddressInfo } from "node:net";
+import { mkdtempSync, rmSync, existsSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { openDb } from "../server/db.ts";
 import { createApp } from "../server/app.ts";
 import JSZip from "jszip";
@@ -11,6 +14,7 @@ let server: Server;
 let base = "";
 let fakeClaude: Server;
 const claudeCalls: any[] = [];
+let tmpUploadDir = "";
 
 async function api(method: string, path: string, body?: unknown) {
   const res = await fetch(base + path, { method, headers: { "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
@@ -20,6 +24,8 @@ async function api(method: string, path: string, body?: unknown) {
 }
 
 before(async () => {
+  tmpUploadDir = mkdtempSync(join(tmpdir(), "ba-test-api-uploads-"));
+  process.env.UPLOAD_DIR = tmpUploadDir;
   delete process.env.ANTHROPIC_API_KEY;
   openDb(":memory:");
   server = createApp({ publicDir: process.cwd() + "/public" });
@@ -29,6 +35,12 @@ before(async () => {
 after(() => {
   server.close();
   fakeClaude?.close();
+  if (tmpUploadDir && existsSync(tmpUploadDir)) {
+    try {
+      rmSync(tmpUploadDir, { recursive: true, force: true });
+    } catch {}
+  }
+  delete process.env.UPLOAD_DIR;
 });
 
 test("luồng end-to-end (mock): dự án → màn hình → khoanh vùng + bình luận → sửa → duyệt → tài liệu → test → xuất file", async () => {

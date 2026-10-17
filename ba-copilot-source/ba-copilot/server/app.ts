@@ -12,6 +12,7 @@ import { buildDocx } from "./export/docx.ts";
 import { testWorkbook } from "./export/xlsx.ts";
 import { authEnabled, isAuthenticated, login, logout, LOGIN_HTML } from "./auth.ts";
 import { buildTrace } from "../shared/trace.ts";
+import { saveBuffer, readFileFromDisk, removeFileFromDisk, saveExport } from "./files.ts";
 
 type Handler = (ctx: { req: IncomingMessage; res: ServerResponse; params: Record<string, string>; body: any; query: URLSearchParams }) => Promise<unknown> | unknown;
 interface Route {
@@ -144,7 +145,10 @@ route("GET", "/api/modules/:id/export/docx", async ({ params }) => {
   if (!m.docs.useCases.length) throw new BizError("Chưa có tài liệu để xuất");
   const names = new Map(m.screens.map((s) => [s.id, s.name]));
   const buf = await buildDocx(m.project, m, m.docs, (id) => names.get(id) ?? id);
-  return new FileResponse(buf, `${fileSafe(m.name)}_UC_SRS_Sequence.docx`, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+  const filename = `${fileSafe(m.name)}_UC_SRS_Sequence.docx`;
+  const mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  saveExport(m.projectId, m.id, filename, buf, mime);
+  return new FileResponse(buf, filename, mime);
 });
 route("GET", "/api/modules/:id/export/xlsx", async ({ params }) => {
   const m = repo.getModuleDetail(params.id);
@@ -152,13 +156,53 @@ route("GET", "/api/modules/:id/export/xlsx", async ({ params }) => {
   if (!m.tests.length) throw new BizError("Chưa có test case để xuất");
   const names = new Map(m.screens.map((s) => [s.id, s.name]));
   const buf = await testWorkbook(m.tests, buildTrace(m.docs.useCases, m.docs.requirements, m.tests), (id) => names.get(id) ?? id);
-  return new FileResponse(buf, `${fileSafe(m.name)}_TestCase.xlsx`, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  const filename = `${fileSafe(m.name)}_TestCase.xlsx`;
+  const mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  saveExport(m.projectId, m.id, filename, buf, mime);
+  return new FileResponse(buf, filename, mime);
 });
 route("GET", "/api/screens/:id/export/json", ({ params }) => {
   const s = repo.getScreen(params.id);
   const v = s?.currentVersionId ? repo.getVersion(s.currentVersionId) : null;
   if (!s || !v) throw new BizError("Không tìm thấy màn hình", 404);
   return new FileResponse(Buffer.from(JSON.stringify(v.tree, null, 2)), `${fileSafe(s.name)}.json`, "application/json");
+});
+
+// Kho tài liệu
+route("GET", "/api/projects/:id/files", ({ params }) => {
+  if (!repo.getProject(params.id)) throw new BizError("Không tìm thấy dự án", 404);
+  return repo.listFiles(params.id);
+});
+route("POST", "/api/projects/:id/files", ({ params, body }) => {
+  if (!repo.getProject(params.id)) throw new BizError("Không tìm thấy dự án", 404);
+  if (body.moduleId) {
+    const mod = repo.getModule(str(body.moduleId));
+    if (!mod || mod.projectId !== params.id) throw new BizError("Module không thuộc dự án này", 400);
+  }
+  const b64 = typeof body.contentBase64 === "string" ? body.contentBase64.trim() : "";
+  if (!b64) throw new BizError("Nội dung file (base64) không được để trống");
+  let buf: Buffer;
+  try {
+    buf = Buffer.from(b64, "base64");
+  } catch {
+    throw new BizError("Nội dung base64 không hợp lệ");
+  }
+  if (!buf.length) throw new BizError("Nội dung file rỗng");
+  return saveBuffer(params.id, body.moduleId ? str(body.moduleId) : null, str(body.name), buf, "upload");
+});
+route("GET", "/api/files/:id/download", ({ params }) => {
+  const f = repo.getFile(params.id);
+  if (!f) throw new BizError("Không tìm thấy file", 404);
+  const buf = readFileFromDisk(f.storedName);
+  if (!buf) throw new BizError("Không tìm thấy file trên đĩa", 404);
+  return new FileResponse(buf, f.name, f.mime);
+});
+route("DELETE", "/api/files/:id", ({ params }) => {
+  const f = repo.getFile(params.id);
+  if (!f) throw new BizError("Không tìm thấy file", 404);
+  removeFileFromDisk(f.storedName);
+  repo.deleteFileRow(params.id);
+  return { ok: true };
 });
 
 function fileSafe(s: string) {
@@ -168,11 +212,13 @@ function fileSafe(s: string) {
 // ---------------------------------------------------------------- HTTP plumbing
 async function readBody(req: IncomingMessage): Promise<any> {
   if (req.method === "GET" || req.method === "HEAD") return {};
+  const isUpload = req.method === "POST" && /^\/api\/projects\/[^/]+\/files(\?.*)?$/.test(req.url ?? "");
+  const limit = isUpload ? 15_000_000 : 5_000_000;
   const chunks: Buffer[] = [];
   let size = 0;
   for await (const c of req) {
     size += (c as Buffer).length;
-    if (size > 5_000_000) throw new BizError("Dữ liệu gửi lên quá lớn", 413);
+    if (size > limit) throw new BizError("Dữ liệu gửi lên quá lớn", 413);
     chunks.push(c as Buffer);
   }
   if (!chunks.length) return {};

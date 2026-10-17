@@ -28,7 +28,7 @@ function App() {
   }, []);
   const parts = hash.replace(/^#\/?/, "").split("/");
   let view: React.ReactNode;
-  if (parts[0] === "p" && parts[1]) view = <ProjectView id={parts[1]} />;
+  if (parts[0] === "p" && parts[1]) view = <ProjectView id={parts[1]} tab={parts[2] || "modules"} initialModuleId={parts[3] || null} />;
   else if (parts[0] === "m" && parts[1]) view = <ModuleView id={parts[1]} tab={parts[2] || "design"} />;
   else view = <Home />;
 
